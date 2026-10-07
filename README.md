@@ -44,9 +44,12 @@ Condition (iii) is flatness of the *matrix-valued* evolution at $\lambda = 1$. F
 scalar carrier $h$ to order 2N+2 is then a theorem of the development (`Flatness.h_flat`), not an
 extra hypothesis.
 
-**Achievable costs and the optimum.**
+**Achievable costs and the optimum.** With the admissible set as above, the achievable costs and
+the optimal cost at order $N$ are
 
-$$\mathrm{costs}(N, \varphi) = \left\{ T(\theta) : \exists L, \alpha, \theta, \ \text{Admissible } N \varphi L \alpha \theta \right\}, \quad T_{\min}(N, \varphi) = \inf \mathrm{costs}(N, \varphi).$$
+$$\mathrm{costs}(N, \varphi) = \text{the set of } T(\theta) \text{ over all admissible } (L, \alpha, \theta),$$
+
+$$T_{\min}(N, \varphi) = \inf \mathrm{costs}(N, \varphi).$$
 
 **Scalar error carrier.** $h(\lambda) = 1 - \frac{1}{2} \mathrm{Tr}[U_1^{\dagger} U_\lambda]$
 (Lean: `h L α θ λ`), with $0 \le h \le 2$ (`Elementary.h_bounds`).
