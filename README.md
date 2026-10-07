@@ -38,7 +38,9 @@ $$T(\theta) = \sum_{j=1}^{L} \theta_j$$
 
 **Order-N robustness at target φ** (Lean: `Admissible N φ L α θ`) means all three of
 
-$$\text{(i)} \quad \theta_j \ge 0 \ \ (1 \le j \le L); \qquad \text{(ii)} \quad U_1 = Z(\varphi); \qquad \text{(iii)} \quad \left. \frac{d^k}{d\lambda^k} U_\lambda \right|_{\lambda = 1} = 0 \ \ (1 \le k \le N).$$
+$$\text{(i)} \quad \theta_j \ge 0 \ \ (1 \le j \le L), \qquad \text{(ii)} \quad U_1 = Z(\varphi),$$
+
+$$\text{(iii)} \quad U_\lambda \ \text{is flat at} \ \lambda = 1 \ \text{to order} \ N, \ \text{i.e.} \ \frac{d^k}{d\lambda^k} U_\lambda = 0 \ \text{at} \ \lambda = 1 \ \ \text{for} \ 1 \le k \le N .$$
 
 Condition (iii) is flatness of the *matrix-valued* evolution at $\lambda = 1$. Flatness of the
 scalar carrier $h$ to order 2N+2 is then a theorem of the development (`Flatness.h_flat`), not an
