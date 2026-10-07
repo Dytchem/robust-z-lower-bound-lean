@@ -15,47 +15,48 @@ Everything below is checked by the Lean kernel; the only axioms used are `propex
 
 ## The formalised statement
 
-The statement layer is `RobustZ/Statement.lean`. Throughout, `M2 = Matrix (Fin 2) (Fin 2) ℂ`,
-`σ_x, σ_z` are the Pauli matrices, and
+Everything below is the content of `RobustZ/Statement.lean`. Throughout, `M2 = Matrix (Fin 2) (Fin 2) ℂ`
+and $\sigma_x, \sigma_z$ are the Pauli matrices, so that
 
-$$X(\alpha) \;=\; \exp\!(-\tfrac{i\alpha}{2}\sigma_x),\qquad
-Z(\theta) \;=\; \exp\!(-\tfrac{i\theta}{2}\sigma_z)$$
+$$X(\alpha) = \exp(-\tfrac{i\alpha}{2}\sigma_x), \quad Z(\theta) = \exp(-\tfrac{i\theta}{2}\sigma_z)$$
 
-(the Lean names are `Xrot`, `Zrot`; both are `NormedSpace.exp` of an anti-Hermitian generator).
+are the exact `X` rotation and the error-free `Z` evolution (Lean: `Xrot`, `Zrot`; both are
+`NormedSpace.exp` of an anti-Hermitian generator).
 
-**Evolution.** For `L : ℕ`, `α θ : Fin L → ℝ` and `λ : ℝ`,
+**Evolution.** For $L : \mathbb{N}$, $\alpha, \theta : \mathrm{Fin}\,L \to \mathbb{R}$ and
+$\lambda \in \mathbb{R}$,
 
-$$U_\lambda \;=\; X(\alpha_1)\,Z(\lambda\theta_1)\;X(\alpha_2)\,Z(\lambda\theta_2)\;\cdots\;X(\alpha_L)\,Z(\lambda\theta_L)\;\in\;M_2 ,$$
+$$U_\lambda = X(\alpha_1) Z(\lambda\theta_1) X(\alpha_2) Z(\lambda\theta_2) \cdots X(\alpha_L) Z(\lambda\theta_L) \in M_2 ,$$
 
-i.e. `U L α θ λ`, defined recursively left to right.
+i.e. `U L α θ λ`, defined recursively from left to right.
 
-**Cost.** $\;T(\theta) \;=\; \sum_{j=1}^{L}\theta_j$ (`cost θ`).
+**Cost.** The total $Z$-evolution angle is
 
-**Order-`N` robustness at target `φ`** (`Admissible N φ L α θ`): three conditions,
+$$T(\theta) = \sum_{j=1}^{L} \theta_j$$
 
-$$\text{(i)}\ \ \theta_j \ge 0 \ \ (1\le j\le L);\qquad
-\text{(ii)}\ \ U_1 = Z(\varphi);\qquad
-\text{(iii)}\ \ \frac{d^k}{d\lambda^k}U_\lambda\Big|_{\lambda=1} = 0 \ \ (1\le k\le N).$$
+(Lean: `cost θ`).
 
-Condition (iii) is flatness of the *matrix-valued* evolution at `λ = 1`; flatness of the scalar
-carrier $h$ to order $2N+2$ is then a theorem about the formalisation (`Flatness.h_flat`), not an
+**Order-$N$ robustness at target $\varphi$** (Lean: `Admissible N φ L α θ`) means all three of
+
+$$\text{(i)} \quad \theta_j \ge 0 \ \ (1 \le j \le L); \qquad \text{(ii)} \quad U_1 = Z(\varphi); \qquad \text{(iii)} \quad \left. \frac{d^k}{d\lambda^k} U_\lambda \right|_{\lambda = 1} = 0 \ \ (1 \le k \le N).$$
+
+Condition (iii) is flatness of the *matrix-valued* evolution at $\lambda = 1$. Flatness of the
+scalar carrier $h$ to order $2N+2$ is then a theorem of the development (`Flatness.h_flat`), not an
 extra hypothesis.
 
 **Achievable costs and the optimum.**
 
-$$\mathrm{costs}(N,\varphi) \;=\; \{\,T(\theta)\;:\;\exists\,L,\alpha,\theta,\ \
-\text{Admissible } N\,\varphi\,L\,\alpha\,\theta\,\},\qquad
-T_{\min}(N,\varphi) \;=\; \inf \mathrm{costs}(N,\varphi).$$
+$$\mathrm{costs}(N, \varphi) = \{ T(\theta) : \exists L, \alpha, \theta, \ \text{Admissible } N \varphi L \alpha \theta \}, \qquad T_{\min}(N, \varphi) = \inf \mathrm{costs}(N, \varphi).$$
 
-**Scalar error carrier.** $\;h(\lambda) \;=\; 1 - \tfrac12\mathrm{Tr}\![U_1^{\dagger}U_\lambda]$
-(`h L α θ λ`), with `0 ≤ h ≤ 2` (`Elementary.h_bounds`).
+**Scalar error carrier.** $h(\lambda) = 1 - \frac{1}{2} \mathrm{Tr}[U_1^{\dagger} U_\lambda]$
+(Lean: `h L α θ λ`), with $0 \le h \le 2$ (`Elementary.h_bounds`).
 
 **Theorem (paper Theorem 1, first inequality).** For every $\varphi$ with $0 < \varphi \le \pi$, if
-an admissible construction exists at every order, then
+an admissible construction exists at every order $N$, then
 
-$$4 \;\le\; \liminf_{N\to\infty}\ \frac{T_{\min}(N,\varphi)}{N}.$$
+$$4 \le \liminf_{N \to \infty} \frac{T_{\min}(N, \varphi)}{N} .$$
 
-Its Lean form, `RobustZ/Theorem.lean`:
+In Lean (`RobustZ/Theorem.lean`):
 
 ```lean
 theorem RobustZ.c_ge_four (φ : ℝ) (hφ0 : 0 < φ) (hφπ : φ ≤ Real.pi)
@@ -66,20 +67,21 @@ theorem RobustZ.c_ge_four (φ : ℝ) (hφ0 : 0 < φ) (hφπ : φ ≤ Real.pi)
 
 **The two extra hypotheses are bookkeeping, and both are forced by Mathlib's conventions.**
 
-* `hne` (an admissible construction at every order) keeps $\inf$ away from its junk value: Mathlib
-  defines `sInf ∅ = 0`, so for a target admitting no admissible construction the *unqualified*
-  statement would be false rather than vacuous. Mathematically `hne` is the paper's implicit
-  standing assumption; for `φ = π` it is supplied by the equiangular construction quoted in the
-  paper.
+* `hne` (an admissible construction at every order) keeps the infimum away from its junk value:
+  Mathlib defines `sInf ∅ = 0`, so without it the unqualified statement would be false rather than
+  vacuous for a target admitting no admissible construction. Mathematically it is the paper's
+  implicit standing assumption; for $\varphi = \pi$ it is supplied by the equiangular construction
+  quoted in the paper.
 * `hbdd` ($T_{\min}(N,\varphi)/N$ eventually bounded above) is the side condition that
-  `Filter.le_liminf_of_le` requires. On `ℝ`, $\liminf$ is $\sup$ of the eventual lower bounds, and
-  $\sup$ is junk (`0`) on a set that is not bounded above — so boundedness is genuinely needed, not
-  cosmetic. `RobustZ/Liminf.lean` proves the counterexample: with $a_N = N^2$ and $c = 1$ one has
-  $c - \delta \le a_N/N$ eventually for every $\delta>0$, yet $\liminf_N a_N/N = 0$.
-  Mathematically `hbdd` follows from the same quoted construction ($T_{\min}(N,\varphi) \le M N$).
+  `Filter.le_liminf_of_le` needs. On $\mathbb{R}$, the liminf is the supremum of the eventual lower
+  bounds, and that supremum is junk (`0`) on a set which is not bounded above — so boundedness is
+  genuinely required, not cosmetic. `RobustZ/Liminf.lean` proves the counterexample: for
+  $a_N = N^2$ and $c = 1$ one has $c - \delta \le a_N/N$ eventually for every $\delta > 0$, yet
+  $\liminf_N a_N / N = 0$. Mathematically `hbdd` follows from the same quoted construction
+  ($T_{\min}(N,\varphi) \le M N$).
 
-Dropping `hbdd` gives the assumption-free dichotomy — either the same bound, or `Tmin N φ / N`
-eventually exceeds every real number:
+Dropping `hbdd` gives the assumption-free dichotomy: either the same bound, or $T_{\min}(N,\varphi)/N$
+eventually exceeds every real number.
 
 ```lean
 theorem RobustZ.c_ge_four_or_grows (φ : ℝ) (hφ0 : 0 < φ) (hφπ : φ ≤ Real.pi)
