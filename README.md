@@ -15,18 +15,47 @@ Everything below is checked by the Lean kernel; the only axioms used are `propex
 
 ## The formalised statement
 
-The statement layer is `RobustZ/Statement.lean`. With `M2 = Matrix (Fin 2) (Fin 2) ℂ`,
-`J_z = -I • σ_z`, `J_x = -I • σ_x`,
+The statement layer is `RobustZ/Statement.lean`. Throughout, `M2 = Matrix (Fin 2) (Fin 2) ℂ`,
+`σ_x, σ_z` are the Pauli matrices, and
 
-* `Zrot θ = NormedSpace.exp (θ • (1/2 : ℂ) • J_z)`, `Xrot α = exp (α • (1/2 : ℂ) • J_x)`;
-* `U L α θ λ = ∏_{j<L} Xrot (α j) * Zrot (λ * θ j)` — the composite evolution;
-* `cost θ = ∑ j, θ j`;
-* `Admissible N φ L α θ` — all angles nonnegative, `U L α θ 1 = Zrot φ`, and the first `N`
-  derivatives of `λ ↦ U L α θ λ` vanish at `λ = 1` (order-`N` robustness);
-* `costs N φ = {T | ∃ L α θ, Admissible N φ L α θ ∧ T = cost θ}` and
-  `Tmin N φ = sInf (costs N φ)`.
+$$X(\alpha) \;=\; \exp\!\Bigl(-\tfrac{i\alpha}{2}\sigma_x\Bigr),\qquad
+Z(\theta) \;=\; \exp\!\Bigl(-\tfrac{i\theta}{2}\sigma_z\Bigr)$$
 
-The main theorem, `RobustZ/Theorem.lean`:
+(the Lean names are `Xrot`, `Zrot`; both are `NormedSpace.exp` of an anti-Hermitian generator).
+
+**Evolution.** For `L : ℕ`, `α θ : Fin L → ℝ` and `λ : ℝ`,
+
+$$U_\lambda \;=\; X(\alpha_1)\,Z(\lambda\theta_1)\;X(\alpha_2)\,Z(\lambda\theta_2)\;\cdots\;X(\alpha_L)\,Z(\lambda\theta_L)\;\in\;M_2 ,$$
+
+i.e. `U L α θ λ`, defined recursively left to right.
+
+**Cost.** $\;T(\theta) \;=\; \sum_{j=1}^{L}\theta_j$ (`cost θ`).
+
+**Order-`N` robustness at target `φ`** (`Admissible N φ L α θ`): three conditions,
+
+$$\text{(i)}\ \ \theta_j \ge 0 \ \ (1\le j\le L);\qquad
+\text{(ii)}\ \ U_1 = Z(\varphi);\qquad
+\text{(iii)}\ \ \frac{d^k}{d\lambda^k}U_\lambda\Big|_{\lambda=1} = 0 \ \ (1\le k\le N).$$
+
+Condition (iii) is flatness of the *matrix-valued* evolution at `λ = 1`; flatness of the scalar
+carrier $h$ to order $2N+2$ is then a theorem about the formalisation (`Flatness.h_flat`), not an
+extra hypothesis.
+
+**Achievable costs and the optimum.**
+
+$$\mathrm{costs}(N,\varphi) \;=\; \bigl\{\,T(\theta)\;:\;\exists\,L,\alpha,\theta,\ \
+\text{Admissible } N\,\varphi\,L\,\alpha\,\theta\,\bigr\},\qquad
+T_{\min}(N,\varphi) \;=\; \inf \mathrm{costs}(N,\varphi).$$
+
+**Scalar error carrier.** $\;h(\lambda) \;=\; 1 - \tfrac12\operatorname{Tr}\!\bigl[U_1^{\dagger}U_\lambda\bigr]$
+(`h L α θ λ`), with `0 ≤ h ≤ 2` (`Elementary.h_bounds`).
+
+**Theorem (paper Theorem 1, first inequality).** For every $\varphi$ with $0 < \varphi \le \pi$, if
+an admissible construction exists at every order, then
+
+$$4 \;\le\; \liminf_{N\to\infty}\ \frac{T_{\min}(N,\varphi)}{N}.$$
+
+Its Lean form, `RobustZ/Theorem.lean`:
 
 ```lean
 theorem RobustZ.c_ge_four (φ : ℝ) (hφ0 : 0 < φ) (hφπ : φ ≤ Real.pi)
@@ -35,18 +64,22 @@ theorem RobustZ.c_ge_four (φ : ℝ) (hφ0 : 0 < φ) (hφπ : φ ≤ Real.pi)
     4 ≤ Filter.liminf (fun N : ℕ => Tmin N φ / N) Filter.atTop
 ```
 
-The two extra hypotheses are bookkeeping on the formalisation side, not mathematical content:
+**The two extra hypotheses are bookkeeping, and both are forced by Mathlib's conventions.**
 
-* `hne` keeps `sInf` away from its junk value — Mathlib defines `sInf ∅ = 0`, so without it the
-  claim would be vacuous-to-false for a target that admits no admissible construction.
-* `hbdd` is the boundedness-above side condition that `Filter.le_liminf_of_le` needs. On `ℝ`,
-  `Filter.liminf` is `sSup` of the eventual lower bounds, and `sSup` is junk (`0`) on a set that
-  is not bounded above — so the boundedness hypothesis is genuinely required, not cosmetic.
-  `RobustZ/Liminf.lean` documents this and proves the counterexample
-  (`not_liminf_ge_of_eventually`, `a N = N * N`, `c = 1`).
+* `hne` (an admissible construction at every order) keeps $\inf$ away from its junk value: Mathlib
+  defines `sInf ∅ = 0`, so for a target admitting no admissible construction the *unqualified*
+  statement would be false rather than vacuous. Mathematically `hne` is the paper's implicit
+  standing assumption; for `φ = π` it is supplied by the equiangular construction quoted in the
+  paper.
+* `hbdd` ($T_{\min}(N,\varphi)/N$ eventually bounded above) is the side condition that
+  `Filter.le_liminf_of_le` requires. On `ℝ`, $\liminf$ is $\sup$ of the eventual lower bounds, and
+  $\sup$ is junk (`0`) on a set that is not bounded above — so boundedness is genuinely needed, not
+  cosmetic. `RobustZ/Liminf.lean` proves the counterexample: with $a_N = N^2$ and $c = 1$ one has
+  $c - \delta \le a_N/N$ eventually for every $\delta>0$, yet $\liminf_N a_N/N = 0$.
+  Mathematically `hbdd` follows from the same quoted construction ($T_{\min}(N,\varphi) \le M N$).
 
-Dropping `hbdd` gives the assumption-free dichotomy `RobustZ.c_ge_four_or_grows`, which concludes
-either the same bound or that `Tmin N φ / N` eventually exceeds every real number:
+Dropping `hbdd` gives the assumption-free dichotomy — either the same bound, or `Tmin N φ / N`
+eventually exceeds every real number:
 
 ```lean
 theorem RobustZ.c_ge_four_or_grows (φ : ℝ) (hφ0 : 0 < φ) (hφπ : φ ≤ Real.pi)
