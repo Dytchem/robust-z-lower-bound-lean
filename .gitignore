@@ -1,0 +1,13 @@
+# Lean / Lake build artifacts
+.lake/
+*.olean
+*.ilean
+*.trace
+*.hash
+
+# editor / OS
+.vscode/
+.idea/
+.DS_Store
+*.bak
+*.swp
