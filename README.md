@@ -57,12 +57,21 @@ theorem RobustZ.c_ge_four_or_grows (φ : ℝ) (hφ0 : 0 < φ) (hφπ : φ ≤ Re
 
 ## Build
 
+The project depends on mathlib4 through a **pinned git dependency** — `git =
+"https://github.com/leanprover-community/mathlib4"`, `rev = "v4.34.1"` in `lakefile.toml`,
+resolved to `d13f23b723b8a846827a245b89c10fc7d3f11612` in `lake-manifest.json`. It is *not* a
+local path dependency, so a fresh clone builds on any machine. `lean-toolchain` pins the compiler
+to `leanprover/lean4:v4.34.1`.
+
 ```sh
+git clone https://github.com/Dytchem/robust-z-lower-bound-lean.git
+cd robust-z-lower-bound-lean
+
 # 1. elan, if you do not have it yet
 curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
 export PATH="$HOME/.elan/bin:$PATH"
 
-# 2. mathlib oleans (~5 GB, this takes a while)
+# 2. mathlib sources + oleans (~5 GB, this takes a while)
 lake exe cache get
 
 # 3. build
@@ -72,7 +81,7 @@ lake build              # expected: Build completed successfully (3709 jobs)
 lake env lean RobustZ/Audit.lean
 ```
 
-`RobustZ/Audit.lean` is deliberately outside the library target, so `lake build` does not compile
+`RobustZ/Audit.lean` is not part of the `RobustZ` library target, so `lake build` does not compile
 it — run it explicitly as in step 4. On a machine with little RAM, use `lake build -j1`.
 
 ## Module map
@@ -105,7 +114,7 @@ it — run it explicitly as in step 4. On a machine with little RAM, use `lake b
 | File | Content |
 | --- | --- |
 | `Approx.lean` | Fourier coefficients of `F(θ) = e^{-iτ cos θ}` and the contour-shift bound `\|cₙ\| ≤ exp(τ sinh δ - nδ)`. |
-| `Band.lean` | Transports the `θ`-form approximation error to the band `\|μ\| ≤ τ`, with the explicit geometric constant `epsOf`. |
+| `Band.lean` | Transports the `θ`-form approximation error to the band `\|μ\| ≤ τ`, with an explicit geometric decay constant (named `epsOf` where it is used, in `M5Apply.lean`). |
 | `PsiBounds.lean` | Explicit bounds for `Ψ_A`, `Ψ` and their derivatives on the band, and continuity/differentiability of the cutoff. |
 | `ChebDeriv.lean` | Chebyshev-derivative estimates: coefficient-wise bounds for `T_n'` and `T_n''` on `[-1,1]`, and derivative bounds for `approxPoly`. |
 | `CollarBound.lean` | The collar `\|u\| ≤ 1+δ`: growth bounds for `T_n`, `T_n'` and for `approxPoly` outside the band. |
@@ -201,6 +210,10 @@ Expected output — every line exactly the three standard axioms, no `sorryAx`:
 
 ## Layout
 
-30 modules under `RobustZ/`, 10496 lines, plus the root aggregator `RobustZ.lean`. Toolchain
-`leanprover/lean4:v4.34.1`; mathlib4 pinned at tag `v4.34.1`
+30 modules under `RobustZ/` (10467 lines) plus the root aggregator `RobustZ.lean` (29 lines),
+10496 lines in total. Toolchain `leanprover/lean4:v4.34.1`; mathlib4 pinned at tag `v4.34.1`
 (`d13f23b723b8a846827a245b89c10fc7d3f11612`) via `lake-manifest.json`.
+
+## License
+
+[Apache License 2.0](LICENSE) — Copyright 2026 Dytchem.
