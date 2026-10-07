@@ -23,7 +23,7 @@ $$X(\alpha) = \exp(-\tfrac{i\alpha}{2}\sigma_x), \quad Z(\theta) = \exp(-\tfrac{
 are the exact `X` rotation and the error-free `Z` evolution (Lean: `Xrot`, `Zrot`; both are
 `NormedSpace.exp` of an anti-Hermitian generator).
 
-**Evolution.** For $L : \mathbb{N}$, $\alpha, \theta : \mathrm{Fin}\,L \to \mathbb{R}$ and
+**Evolution.** For $L : \mathbb{N}$, $\alpha, \theta : \mathrm{Fin} L \to \mathbb{R}$ and
 $\lambda \in \mathbb{R}$,
 
 $$U_\lambda = X(\alpha_1) Z(\lambda\theta_1) X(\alpha_2) Z(\lambda\theta_2) \cdots X(\alpha_L) Z(\lambda\theta_L) \in M_2 ,$$
