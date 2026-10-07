@@ -36,17 +36,17 @@ $$T(\theta) = \sum_{j=1}^{L} \theta_j$$
 
 (Lean: `cost θ`).
 
-**Order-$N$ robustness at target $\varphi$** (Lean: `Admissible N φ L α θ`) means all three of
+**Order-N robustness at target φ** (Lean: `Admissible N φ L α θ`) means all three of
 
 $$\text{(i)} \quad \theta_j \ge 0 \ \ (1 \le j \le L); \qquad \text{(ii)} \quad U_1 = Z(\varphi); \qquad \text{(iii)} \quad \left. \frac{d^k}{d\lambda^k} U_\lambda \right|_{\lambda = 1} = 0 \ \ (1 \le k \le N).$$
 
 Condition (iii) is flatness of the *matrix-valued* evolution at $\lambda = 1$. Flatness of the
-scalar carrier $h$ to order $2N+2$ is then a theorem of the development (`Flatness.h_flat`), not an
+scalar carrier $h$ to order 2N+2 is then a theorem of the development (`Flatness.h_flat`), not an
 extra hypothesis.
 
 **Achievable costs and the optimum.**
 
-$$\mathrm{costs}(N, \varphi) = \{ T(\theta) : \exists L, \alpha, \theta, \ \text{Admissible } N \varphi L \alpha \theta \}, \qquad T_{\min}(N, \varphi) = \inf \mathrm{costs}(N, \varphi).$$
+$$\mathrm{costs}(N, \varphi) = \left\{ T(\theta) : \exists L, \alpha, \theta, \ \text{Admissible } N \varphi L \alpha \theta \right\}, \quad T_{\min}(N, \varphi) = \inf \mathrm{costs}(N, \varphi).$$
 
 **Scalar error carrier.** $h(\lambda) = 1 - \frac{1}{2} \mathrm{Tr}[U_1^{\dagger} U_\lambda]$
 (Lean: `h L α θ λ`), with $0 \le h \le 2$ (`Elementary.h_bounds`).
