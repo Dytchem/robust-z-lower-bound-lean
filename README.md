@@ -82,7 +82,17 @@ lake env lean RobustZ/Audit.lean
 ```
 
 `RobustZ/Audit.lean` is not part of the `RobustZ` library target, so `lake build` does not compile
-it — run it explicitly as in step 4. On a machine with little RAM, use `lake build -j1`.
+it — run it explicitly as in step 4.
+
+Verified end to end on a clean 4-core / 3.8 GB RAM machine, starting from the public clone with no
+credentials at all: `git clone` → `lake exe cache get` → `lake build` →
+`Build completed successfully (3709 jobs).` in 22m21s, followed by the audit below. With two build
+jobs in flight the box stayed out of swap throughout (≥2.4 GB RAM remained available).
+
+Two notes for small machines. This Lake version (5.0.0, Lean 4.34.1) has **no `-j` flag** on
+`lake build` — it schedules its own concurrency (two jobs were observed in practice); passing
+`-j1` fails with `error: unknown short option '-j'`. Keeping some swap available is still
+advisable, since individual module compilations are memory-heavy.
 
 ## Module map
 
