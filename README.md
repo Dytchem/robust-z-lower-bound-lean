@@ -18,8 +18,8 @@ Everything below is checked by the Lean kernel; the only axioms used are `propex
 The statement layer is `RobustZ/Statement.lean`. Throughout, `M2 = Matrix (Fin 2) (Fin 2) ℂ`,
 `σ_x, σ_z` are the Pauli matrices, and
 
-$$X(\alpha) \;=\; \exp\!\Bigl(-\tfrac{i\alpha}{2}\sigma_x\Bigr),\qquad
-Z(\theta) \;=\; \exp\!\Bigl(-\tfrac{i\theta}{2}\sigma_z\Bigr)$$
+$$X(\alpha) \;=\; \exp\!(-\tfrac{i\alpha}{2}\sigma_x),\qquad
+Z(\theta) \;=\; \exp\!(-\tfrac{i\theta}{2}\sigma_z)$$
 
 (the Lean names are `Xrot`, `Zrot`; both are `NormedSpace.exp` of an anti-Hermitian generator).
 
@@ -43,11 +43,11 @@ extra hypothesis.
 
 **Achievable costs and the optimum.**
 
-$$\mathrm{costs}(N,\varphi) \;=\; \bigl\{\,T(\theta)\;:\;\exists\,L,\alpha,\theta,\ \
-\text{Admissible } N\,\varphi\,L\,\alpha\,\theta\,\bigr\},\qquad
+$$\mathrm{costs}(N,\varphi) \;=\; \{\,T(\theta)\;:\;\exists\,L,\alpha,\theta,\ \
+\text{Admissible } N\,\varphi\,L\,\alpha\,\theta\,\},\qquad
 T_{\min}(N,\varphi) \;=\; \inf \mathrm{costs}(N,\varphi).$$
 
-**Scalar error carrier.** $\;h(\lambda) \;=\; 1 - \tfrac12\operatorname{Tr}\!\bigl[U_1^{\dagger}U_\lambda\bigr]$
+**Scalar error carrier.** $\;h(\lambda) \;=\; 1 - \tfrac12\mathrm{Tr}\![U_1^{\dagger}U_\lambda]$
 (`h L α θ λ`), with `0 ≤ h ≤ 2` (`Elementary.h_bounds`).
 
 **Theorem (paper Theorem 1, first inequality).** For every $\varphi$ with $0 < \varphi \le \pi$, if
