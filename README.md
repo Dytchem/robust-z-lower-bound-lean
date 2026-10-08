@@ -72,32 +72,42 @@ of `T_min(N,π)/N` lies between `4` and `2π`, and whether the lower end is atta
 
 ## Where each bound is machine-checked
 
-Three independent Lean 4 + Mathlib trees under [`lean_sharp/`](lean_sharp/), each with its own
-pinned toolchain and manifest.
+[`main_inequalities/`](main_inequalities/) states each bound of the list above in a file of its
+own, in the namespace `RobustZ.MainIneq`:
 
 | bound | declaration | file |
 | --- | --- | --- |
-| elementary | `elementary_bound`, `elementary_bound_pi` | `lean_sharp/wC/RobustZ/ElementaryBound.lean` |
-| Jensen | `jensen_rung_final`, `jensen_rung_pi_final`, `jensen_ratio_tendsto` | `lean_sharp/wF/RobustZ/JensenBridge.lean`, `lean_sharp/wF/RobustZ/JensenRung.lean` |
-| exact criterion | `new_rung_final`, `nr_closed_form` | `lean_sharp/wC/RobustZ/RungFinal.lean`, `lean_sharp/wC/RobustZ/NewRung.lean` |
-| integers at `φ = π` | `cert_N2`–`cert_N4`, `cert_N5_tight`–`cert_N12_tight` | `lean_sharp/wC/RobustZ/RungFinal.lean`, `lean_sharp/wC/RobustZ/RungTight.lean` |
-| weak-constant variant | `eight_over_e_bound` | `lean_sharp/wM/RobustZ/EightOverE.lean` |
-| linear growth, with side conditions | `c_ge_four`, `c_ge_four_or_grows` | `lean_sharp/wC/RobustZ/Theorem.lean` |
+| 2. elementary | `elementary`, `elementary_pi` | `main_inequalities/Elementary.lean` |
+| 3. Jensen | `jensen`, `jensen_pi` | `main_inequalities/Jensen.lean` |
+| 4. weak-constant variant | `weak_constant` | `main_inequalities/WeakConstant.lean` |
+| 5. exact criterion | `exact_criterion`, `closed_form` | `main_inequalities/ExactCriterion.lean` |
+| 5. integers at `φ = π` | `cert_N2` … `cert_N12` | `main_inequalities/Certificates.lean` |
+| 5. linear growth | `linear_growth`, `linear_growth_or_grows` | `main_inequalities/LinearGrowth.lean` |
 
-The direct Taylor bound (1) is proved on paper in three lines, not in Lean.
+Each file imports the tree holding its proof core — [`lean_sharp/wC`](lean_sharp/wC) (elementary,
+exact criterion, certificates, linear growth), [`lean_sharp/wF`](lean_sharp/wF) (Jensen),
+[`lean_sharp/wM`](lean_sharp/wM) (weak-constant variant) — and ends with `#print axioms` on its
+theorems, so one command both re-proves the bound and reports what it rests on.
 
 ```sh
-cd lean_sharp/wC && lake exe cache get && lake build     # likewise wF, wM
+cd lean_sharp/wC && lake exe cache get && lake build     # likewise wF, wM, once per tree
+main_inequalities/verify.sh                              # checks the six files above
 ```
 
-No `sorry`, `admit` or `axiom` occurs in the sources; the `RobustZ/Audit*.lean` files print the
-axioms of the headline declarations (`[propext, Classical.choice, Quot.sound]`).
+The three trees remain the full development (54 + 35 + 47 modules); the direct Taylor bound (1) is
+proved on paper in three lines, not in Lean. In the development checkout Mathlib is required by
+path (`lean_sharp/*/lakefile.toml`), so a fresh clone should first replace that `require` by
+`git = "https://github.com/leanprover-community/mathlib4", rev = "v4.34.1"`.
+
+No `sorry`, `admit` or `axiom` occurs in the sources; every headline declaration depends only on
+`[propext, Classical.choice, Quot.sound]`.
 
 ## Layout
 
 | path | contents |
 | --- | --- |
-| `lean_sharp/{wC,wF,wM}` | the current development — see [`lean_sharp/README.md`](lean_sharp/README.md) |
+| `main_inequalities/` | each machine-checked bound of "The bounds", one file each, with `verify.sh` |
+| `lean_sharp/{wC,wF,wM}` | the full development (proof cores) — see [`lean_sharp/README.md`](lean_sharp/README.md) |
 | `paper/` | LaTeX sources, PDFs and the build script |
 | `RobustZ/` | the superseded first version (tag `v1.0.0`); its documentation is in [`README_first_version.md`](README_first_version.md) |
 | `VERIFICATION.md` | build and audit records |
