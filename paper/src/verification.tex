@@ -2,9 +2,9 @@
 \label{sec:formal}
 
 Each rung of this paper corresponds to a named Lean~4 declaration of a public
-development~\cite{LeanRepo}. The analysis core and the exact-criterion rung live in the
-\lean{wC} tree, the Jensen rung in the \lean{wF} tree, and the weak-constant $8/\mathrm{e}$ variant in
-the \lean{wM} tree (paths below are relative to \lean{lean_sharp/}). In each tree the model
+development~\cite{LeanRepo}. The development consists of three independent trees: the analysis core and the
+exact-criterion rung live in \lean{wC}, the Jensen rung in \lean{wF}, and the weak-constant
+$8/\mathrm{e}$ variant in \lean{wM} (paths below are relative to \lean{lean_sharp/}). In each tree the model
 -- the rotations, the evolution, \lean{Admissible}, and the cost $T=\texttt{cost}\,\theta$ --
 is fixed in \lean{RobustZ/Statement.lean}, and the scalar flatness~\eqref{eq:hflat} is derived
 from the matrix flatness (\lean{h_flat}) rather than assumed. Write $q=2N+2$ and
@@ -12,45 +12,26 @@ $\tauvar=T/2$.
 
 \subsection{The machine-checked statements}
 
-\begin{theorem}[Elementary bound, all orders; \lean{elementary_bound}, \lean{elementary_bound_pi}]
-\label{thm:formal-elementary}
-For every $0<\phi\le\pi$ and every order-$N$ admissible sequence,
-\begin{equation}
-T\ge2\,\bigl(2\,q!\,\sin^{2}(\phi/4)\bigr)^{1/q},
-\qquad\text{and at }\phi=\pi:\quad T\ge2\,(q!)^{1/q}.
-\label{eq:formal-elementary}
-\end{equation}
-This is the kernel-checked form of~\eqref{eq:thm-elementary} (Theorem~\ref{thm:elementary}).
-\end{theorem}
-
-\begin{theorem}[Jensen bound; \lean{jensen_rung_final}, \lean{jensen_rung_pi_final}]
-\label{thm:formal-jensen}
-For every $0<\phi\le\pi$ and every order-$N$ admissible sequence, with
-$s=2\sin^2(\phi/4)$,
-\begin{equation}
-T\ge\frac{\pi\,q}{\mathrm{e}\,(2/s)^{1/q}},
-\qquad\text{and at }\phi=\pi:\quad
-T\ge\frac{\pi\,q}{\mathrm{e}\,2^{1/q}}.
-\label{eq:formal-jensen}
-\end{equation}
-This is the kernel-checked form of~\eqref{eq:thm-jensen} (Theorem~\ref{thm:jensen}); the
-ratio of the per-$N$ bound to $N$ tends to $2\pi/\mathrm{e}$ (\lean{jensen_ratio_tendsto}).
-\end{theorem}
-
-\begin{theorem}[Exact criterion; \lean{new_rung_final}]
-\label{thm:formal-newrung}
-Let $N\ge1$, $0<\phi\le\pi$, $1\le\tauvar<q=2N+2$. If
-$\mathrm{nrCcal}(\tauvar,q)\,q^2\,\mathrm{nrE2star}(\tauvar,q)<\sin^2(\phi/4)$ with the
-closed forms~\eqref{eq:besseldefs}--\eqref{eq:ccal}, then every order-$N$ admissible
-sequence satisfies $2\tauvar<\mathrm{cost}\,\theta$.
-This is the kernel-checked form of~\eqref{eq:thm-newrung} (Theorem~\ref{thm:newrung}).
-The certified instances \lean{cert_N2}--\lean{cert_N4} and
-\lean{cert_N5_tight}--\lean{cert_N12_tight} (Table~\ref{tab:certs}) and the
-closed form $T\ge4(N+1)(1-\mathrm{nrU}(q))$ (\lean{nr_closed_form},
-i.e.~\eqref{eq:closedform}) are proved from it with nothing else added.
-\end{theorem}
+Each rung corresponds to a declaration of the development, stated here with its exact
+hypotheses so that it can be compared with Table~\ref{tab:formal-correspondence} row by row.
+The elementary rung is \lean{elementary_bound}, with \lean{elementary_bound_pi} for the case
+$\phi=\pi$: for every $0<\phi\le\pi$ and every order-$N$ admissible sequence,
+$T\ge2\,(2\,q!\,\sin^{2}(\phi/4))^{1/q}$, and $T\ge2\,(q!)^{1/q}$ at $\phi=\pi$. The Jensen
+rung is \lean{jensen_rung_final}, with \lean{jensen_rung_pi_final} at $\phi=\pi$: with
+$s=2\sin^2(\phi/4)$, $T\ge\pi q/[\mathrm{e}\,(2/s)^{1/q}]$, and \lean{jensen_ratio_tendsto}
+records that this per-order bound divided by $N$ tends to $2\pi/\mathrm{e}$. The exact
+criterion is \lean{new_rung_final}: for $N\ge1$, $0<\phi\le\pi$ and $1\le\tauvar<q=2N+2$, the
+inequality $\mathrm{nrCcal}(\tauvar,q)\,q^2\,\mathrm{nrE2star}(\tauvar,q)<\sin^2(\phi/4)$,
+with the closed forms~\eqref{eq:besseldefs}--\eqref{eq:ccal}, implies
+$2\tauvar<\mathrm{cost}\,\theta$. The certified instances \lean{cert_N2}--\lean{cert_N4} and
+\lean{cert_N5_tight}--\lean{cert_N12_tight} (Table~\ref{tab:certs}) and the closed form
+$T\ge4(N+1)(1-\mathrm{nrU}(q))$ (\lean{nr_closed_form}, i.e.~\eqref{eq:closedform}) are proved
+from it with nothing else added.
 
 \subsection{Statement-by-statement correspondence}
+
+Table~\ref{tab:formal-correspondence} lists the correspondence between the objects of this
+paper and the declarations that check them.
 
 \begin{table}[t]\centering\footnotesize
 \caption{Correspondence between the objects of this paper and the declarations that check them.
@@ -80,21 +61,24 @@ File paths are relative to \lean{lean_sharp/}; declaration names are exact.}
 Machine-checked: the model and the carrier flatness; the elementary bound with its exact
 constant $2$, at every order and every $0<\phi\le\pi$; the Jensen bound with its exact
 constant $\pi/\mathrm{e}$ at every order and every $0<\phi\le\pi$; the exact criterion with its
-closed forms, hence every entry of Table~\ref{tab:certs} and the coefficient-$4$ closed
-form; and the $8/\mathrm{e}$ variant with $C=10^8$. Not machine-checked: the numerical material of
+closed forms, hence every entry of Table~\ref{tab:certs}; the $8/\mathrm{e}$ variant with
+$C=10^8$; and the passage to the coefficient, as follows. \lean{c_ge_four} proves
+$4\le\liminf_{N}T_{\min}(N,\phi)/N$ under two side conditions, that an admissible sequence
+exists at every order and that $T_{\min}(N,\phi)/N$ is eventually bounded above, and the
+dichotomy \lean{c_ge_four_or_grows} keeps only the first and concludes either that same bound
+or that $T_{\min}(N,\phi)/N$ diverges to $+\infty$. The closed form~\eqref{eq:closedform} is
+\lean{nr_closed_form}, whose hypothesis is the existence of truncation data at the bandwidth
+that form prescribes (constructed by \lean{nrCheb_of_truncation}), rather than an
+unconditional per-sequence statement. Not machine-checked: the numerical material of
 Sec.~\ref{sec:numerics}. The low-order sequences found by local search and their
 re-verified costs are upper bounds computed outside Lean; they enter no proof, and no
-optimality or small-$N$ statement about them is formalized. The passage from the
-per-sequence bounds to $\cstar(\phi)\ge4$ in Corollary~\ref{cor:allN} is ordinary analysis
-in the paper; the developments state per-sequence cost bounds and claim no formalized
-infimum. The audit ran on the development sources: a source scan finds no \lean{sorry},
+optimality or small-$N$ statement about them is formalized. The audit ran on the development sources: a source scan finds no \lean{sorry},
 \lean{admit}, or \lean{axiom} in the project files, and the headline theorems depend only
 on the three standard logical axioms \lean{propext}, \lean{Classical.choice} and
 \lean{Quot.sound} (see the \lean{Audit*.lean} files, e.g.\
 \lean{wC/RobustZ/AuditRungFinal.lean}). Statements, build logs and the raw
-\texttt{\#print axioms} output are collected at \url{https://show.dytchem.cn/lean/}, and the
-repository is cited as~\cite{LeanRepo}, with sources at
-\url{https://github.com/Dytchem/robust-z-lower-bound-lean}.
+\texttt{\#print axioms} output are collected at the project page, and the repository with the
+sources is cited as~\cite{LeanRepo}.
 
 \subsection{Code, data, and reproducibility}
 \label{sec:resources}
@@ -117,7 +101,7 @@ precision used in Table~\ref{tab:num}. All addresses were accessed on 8 October 
 \raggedcell \url{https://show.dytchem.cn/bloch/} &
 \raggedcell Bloch-sphere animation and the full angle lists of every sequence of
 Table~\ref{tab:num}; browser-side re-computation of the nominal mismatch, of the deviation
-$\delta(\eps)$ and of its slope, with the equiangular family shown side by side.~\cite{DataRepo} \\
+$\delta(\eps)$ and of its slope, with the reference sequence shown side by side.~\cite{DataRepo} \\
 \raggedcell \url{https://show.dytchem.cn/lean/} &
 \raggedcell Verification status of the formal development: the exact Lean statements of the
 bounds, the source scan for \lean{sorry} and \lean{axiom}, and the raw \lean{lake build} and
@@ -126,7 +110,7 @@ bounds, the source scan for \lean{sorry} and \lean{axiom}, and the raw \lean{lak
 \raggedcell Lean~4 with Mathlib, pinned by \lean{lean-toolchain} and
 \lean{lake-manifest.json}; \lean{VERIFICATION.md} records two from-scratch verifications on
 three trees: \lean{lean_sharp/wC} carries the analysis core, the exact-criterion rung and its
-certificates (52 modules); \lean{lean_sharp/wF} carries the Jensen rung and its bridge
+certificates (54 modules); \lean{lean_sharp/wF} carries the Jensen rung and its bridge
 (35 modules); \lean{lean_sharp/wM} carries the $8/\mathrm{e}$ variant (47 modules); all build
 green with no \lean{sorry} or \lean{axiom} in the sources.~\cite{LeanRepo} \\
 \raggedcell \href{https://show.dytchem.cn/files/code.zip}{Verification scripts and data} &

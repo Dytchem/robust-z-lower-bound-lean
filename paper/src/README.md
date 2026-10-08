@@ -24,5 +24,3 @@
 arXiv 上传：`main.tex verification.tex discussion.tex num_tables.tex refs.bib fignum_num.pdf figphys.pdf`，或附上 `main.bbl`。APS 要求 BibTeX 预先跑过（`build.sh` 已包含）。
 
 数值数据、角度表与复算脚本在数据集里，不在本目录：<https://show.dytchem.cn/files/code.zip>。
-
-本目录只放源码；编译产物 `main.pdf`（APS 投稿版）与 `main_arxiv.pdf`（arXiv 版）在上一级目录。

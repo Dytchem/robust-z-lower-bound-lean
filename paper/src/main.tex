@@ -71,27 +71,23 @@ high-order robust composite $Z$ rotations}
 \date{October 2026}
 
 \begin{abstract}
-We study the unavoidable cost of a high-order robust single-qubit $Z$ rotation in a
-minimal model: the $Z$ evolution is imperfect, its angle carrying a common unknown
-multiplicative error, while exact, instantaneous and free $X$ rotations are available in
-unlimited number and at arbitrary positions. The resource is the total nominal $Z$ angle
-$T$. We prove explicit lower bounds on $T$ that hold at every order $N$ of error
-cancellation, with all constants written out; they form a ladder of four rungs with
-asymptotic coefficients $2/\e$, $4/\e$, $2\pi/\e$ and $4$. The first two rungs follow from a
-single Taylor step, applied first to the propagator and then to the scalar endpoint
-separation whose vanishing order the unitary structure doubles. The third applies Jensen's
-formula to the carrier, an entire function of exponential type whose bandwidth is half the
-cost. The fourth replaces the vanishing derivatives by vanishing moments and approximates
-the carrier's phase on its whole frequency band. That last rung is an exact, checkable
-criterion: whenever an explicit closed-form quantity in the bandwidth falls below
-$\sin^2(\phi/4)$, every order-$N$ sequence satisfies $T>2\tau$. It certifies, with
-machine-checked arithmetic and no approximation-theory input, the bounds
-$T\ge2,2,4,8,10,14,16,18,22,24,28$ at $\phi=\pi$ for $N=2,\dots,12$, and its closed form
-gives the asymptotic coefficient $4$. We also delimit the method: whether any argument
-that uses only the bandwidth and the flatness order can pass $4$ is equivalent to an explicit
-uncertainty-principle-type statement, the remaining gap is the interval $[4,2\pi]$, and
-incoherent errors of a real device place the useful order near $N=2$--$4$. All bounds beyond the first rung are formalized in Lean~4 with Mathlib, as per-sequence
-statements.
+We study the unavoidable cost of a high-order robust single-qubit $Z$ rotation in a minimal
+model: the $Z$ evolution is imperfect, its angle carrying a common unknown multiplicative
+error, while exact, instantaneous and free $X$ rotations are available in unlimited number and
+at arbitrary positions. The resource is the total nominal $Z$ angle $T$. We prove explicit
+lower bounds on $T$ that hold at every order $N$ of error cancellation, with all constants
+written out. They form a ladder of four inequalities with asymptotic coefficients $2/\e$,
+$4/\e$, $2\pi/\e$ and $4$, obtained from a single Taylor step, from Jensen's formula for the
+carrier, and finally from the whole frequency band of that carrier. The last of them is an
+exact criterion: whenever an explicit closed-form quantity in a trial bandwidth $\tau$ falls
+below $\sin^2(\phi/4)$, where $\phi$ is the target angle, every order-$N$ sequence satisfies
+$T>2\tau$. It certifies $T>2\tau$ with $2\tau=2$, $2$, $4$, $8$, $10$, $14$, $16$, $18$, $22$,
+$24$, $28$ at $\phi=\pi$ for $N=2,\dots,12$, with all constants explicit and machine-checked.
+Its closed form gives the asymptotic coefficient $4$. We also delimit the method: whether any
+argument that uses only the bandwidth and the flatness order can pass $4$ is equivalent to an
+explicit uncertainty-principle-type statement, the remaining gap is the interval $[4,2\pi]$,
+and incoherent errors place the useful order near $N=2$--$4$. All bounds beyond the first are
+formalized in Lean~4 with Mathlib, as per-sequence statements.
 \end{abstract}
 
 \keywords{robust quantum control; composite pulses; systematic error; linear lower bound;
@@ -126,8 +122,8 @@ a specified order. The distinction matters: a lower bound on the number of primi
 rotations does not immediately give a lower bound on a time resource when some rotations are
 assigned zero cost.
 
-The setting also occurs naturally in Rydberg-atom control. In a recent QSP-based
-proposal~\cite{Ye2026}, the interaction between two Rydberg atoms is treated as an unknown but
+The setting also occurs naturally in Rydberg-atom control. In a recent proposal based on
+quantum signal processing (QSP)~\cite{Ye2026}, the interaction between two Rydberg atoms is treated as an unknown but
 deterministic phase input, while fast Rydberg transitions are used as interleaved controls,
 and systematic variation of the interaction strength is suppressed by composite control.
 Systematic control deviations are, independently of that proposal, among the dominant error
@@ -216,14 +212,13 @@ are for the model of Sec.~\ref{sec:model}: the present proof uses the analytic d
 common scale parameter $\lambda$ and holds for arbitrary order $N$.
 
 Machine-checked quantum information is by now a developed subject---quantum programs and
-compilers in Coq and Isabelle/HOL~\cite{Bordg2021}, and quantum information theory in
+compilers in Isabelle/HOL~\cite{Bordg2021}, and quantum information theory in
 Lean~\cite{Meiburg2025}---but we are not aware of a formalized lower bound in quantum control.
 The developments behind Theorems~\ref{thm:elementary}, \ref{thm:jensen}
 and~\ref{thm:newrung} attempt one, for a model small enough that the whole proof, analytic
 estimates included, is checked by the kernel.
 
-The connection to the supplied Rydberg QSP manuscript~\cite{Ye2026}---unpublished at the time
-of writing---is complementary. That work treats an unknown interaction phase as the input to a
+The connection to the unpublished Rydberg QSP proposal~\cite{Ye2026} is complementary. That work treats an unknown interaction phase as the input to a
 QSP-style composite protocol and uses fast control pulses to suppress systematic interaction
 variation. The present result identifies a resource limitation in the idealized single-axis
 core of that philosophy: even with perfect free transverse controls, high-order cancellation
@@ -364,8 +359,7 @@ Appendix~\ref{app:technical}, if
 \end{equation}
 then every order-$N$ admissible sequence for the target $\phi$ satisfies
 \begin{equation}
-T\;>\;2\tauvar,
-\qquad\text{hence for all admissible sequences at every }N.
+T\;>\;2\tauvar .
 \label{eq:newrung-conclusion}
 \end{equation}
 The statement is machine-checked as \lean{new_rung_final}: the hypothesis is the strict
@@ -385,8 +379,12 @@ T\;\ge\;\max\Bigl\{\;2\,\bigl[\,2\,q!\,\sin^2(\phi/4)\bigr]^{1/q},\;
 \end{equation}
 where $s=2\sin^2(\phi/4)$ and
 $\tauvar^\ast=\sup\{\tauvar\in[1,q):\mathrm{nrCcal}(\tauvar,q)\,q^2\,
-\mathrm{nrE2star}(\tauvar,q)<\sin^2(\phi/4)\}$.
-Consequently $\cstar(\phi)\ge4$; the Lean developments state the three per-sequence bounds
+\mathrm{nrE2star}(\tauvar,q)<\sin^2(\phi/4)\}$, with the convention that the last term of the
+maximum is dropped when this set is empty.
+Consequently $\cstar(\phi)\ge4$, by combining the per-sequence bounds with the closed
+form~\eqref{eq:closedform}, whose right-hand side is $(4+o(1))N$; here
+$T_{\min}(N,\phi)=+\infty$ if no admissible sequence of order $N$ exists. The Lean
+developments state the three per-sequence bounds
 in~\eqref{eq:allN} (the paper-level $2/\mathrm{e}$ first rung of Theorem~\ref{thm:direct} is
 pointwise weaker than Theorem~\ref{thm:elementary} and is omitted from the maximum),
 and the passage to $\cstar$ is elementary analysis. All rungs used here cover
@@ -394,9 +392,10 @@ $0<\phi\le\pi$; only the certified finite-$N$ table below is stated at $\phi=\pi
 \end{corollary}
 
 Table~\ref{tab:twolayers} compares the four rungs at sample orders. The Jensen rung is the
-strongest of them at every tabulated order $N\le12$, and the exact-criterion rung takes over
-asymptotically, where its coefficient $4$ exceeds $2\pi/\mathrm{e}$; the ratio of the two rows
-tends to $\pi/2$. The first three rows evaluate the closed
+strongest of them at every tabulated order (the table starts at $N=2$; at $N=1$ the
+elementary bound is larger), and the exact-criterion row takes over asymptotically, where its
+coefficient $4$ exceeds $2\pi/\mathrm{e}$. The ratio of the Jensen row to the elementary row
+tends to $\pi/2$, and the ratio of the exact-criterion row to the Jensen row to $2\mathrm{e}/\pi$. The first three rows evaluate the closed
 forms~\eqref{eq:2e-finite}--\eqref{eq:thm-jensen}, whereas the last row consists of integers
 proved inside Lean (Sec.~\ref{sec:newrung}), not of evaluations.
 
@@ -408,8 +407,9 @@ proved inside Lean (Sec.~\ref{sec:newrung}), not of evaluations.
 Rows: direct, $2\,[(N+1)!\,\sqrt2\,]^{1/(N+1)}$ (paper-level); elementary, $2\,(q!)^{1/q}$
 (\lean{elementary_bound_pi}); Jensen, $\pi q/(\mathrm{e}\,2^{1/q})$
 (\lean{jensen_rung_pi_final}); last row, the integers $2\tauvar$ certified in Lean
-(\lean{cert_N2}--\lean{cert_N4}, \lean{cert_N5_tight}--\lean{cert_N12_tight}). Bold marks the
-strongest proved lower bound at each order.}
+(\lean{cert_N2}--\lean{cert_N4}, \lean{cert_N5_tight}--\lean{cert_N12_tight}). Every entry is a
+lower bound on $T$; the last row is strict, $T>2\tauvar$, the other three are not. Bold marks
+the strongest proved lower bound at each order.}
 \label{tab:twolayers}
 \begin{tabular}{lrrrrrrrr}
 \toprule
@@ -660,11 +660,14 @@ the indicator mean $\frac1{2\pi}\int_0^{2\pi}|\sin\theta|\,\mathrm{d}\theta=2/\p
 \label{eq:jmean}
 \end{equation}
 This is the non-asymptotic form of the
-Phragm\'en--Lindel\"of indicator bound: growth lives only in $\Im z$, and the circular mean
-sees mostly the real axis where there is almost none.
+Phragm\'en--Lindel\"of indicator bound: $|H|$ grows only in the imaginary direction, and since
+the circle average of $|\sin\theta|$ is $2/\pi$, most of that average comes from near the real
+axis, where the growth is negligible.
 
 Jensen's formula on the disc $D(0,r)$ reads
-$\bar M(r)=\log h(0)+N(r)$, where $N(r)$ counts zeros in $|z|\le r$. The flatness of
+$\bar M(r)=\log h(0)+N(r)$, where $N(r)=\sum_{|a_k|<r}\log(r/|a_k|)$ is the weighted count of
+the zeros $a_k$ of $H$ inside the disc; here $H$ is scalar-valued, so the growth bound
+$\|H(z)\|\le2\,\mathrm{e}^{\tauvar|\Im z|}$ of~\eqref{eq:jgrow} is a bound on $|H(z)|$. The flatness of
 Proposition~\ref{prop:flatness} is a $q$-fold complex zero at $\lambda=1$,
 and every such zero with $|1|<r$ contributes $\log(r/1)>0$, so for $r>1$
 \begin{equation}
@@ -672,8 +675,8 @@ N(r)\;\ge\;q\log r.
 \label{eq:jzero}
 \end{equation}
 Dropping unknown zeros only decreases the right-hand side, and using fewer than the $q$
-known zeros is strictly weaker. Zeros on the circle $|z|=r$ are handled by
-perturbation and continuity; the optimizer below is interior, so no boundary case is used.
+known zeros is strictly weaker. The $q$ zeros at $\lambda=1$ lie strictly inside the discs $|z|=r$ with $r>1$ used below, so no
+zero on the boundary is involved, and the optimizer below is interior.
 
 \subsection{Proof of Theorem~\ref{thm:jensen}}
 
@@ -776,7 +779,10 @@ Each row is an integer $2\tauvar$ with $T>2\tauvar$ proved by the named theorem:
 \caption{Integers certified in Lean at $\phi=\pi$ by the exact criterion: order $N$, $q=2N+2$,
 the certified bandwidth $\tauvar$ (certificates \lean{cert_N2}--\lean{cert_N4} and
 \lean{cert_N5_tight}--\lean{cert_N12_tight} in column order), and the resulting lower bound
-$T>2\tauvar$.}
+$2\tauvar\le\mathrm{cost}\,\theta$, which the wrapper \lean{new_rung_final} upgrades to the
+strict bound $T>2\tauvar$ of Theorem~\ref{thm:newrung}. The certified values are not claimed to
+be maximal in $\tauvar$; with the same definitions the criterion also passes at $\tauvar=2$ for
+$N=3$ and $\tauvar=3$ for $N=4$.}
 \label{tab:certs}
 {\footnotesize\setlength{\tabcolsep}{3pt}
 \begin{tabular}{lrrrrrrrrrrr}
@@ -798,16 +804,18 @@ The criterion~\eqref{eq:thm-newrung} implies a closed form with honest constants
 \mathrm{nrU}(q):=6\Bigl(\frac{\log q}{q}\Bigr)^{2/3},
 \label{eq:nrU}
 \end{equation}
-the development proves (Lean \lean{nr_closed_form}) that for every $N$ above the explicit
-threshold $N\ge500+\lceil\exp((11+|\log s_0|)/1.2)\rceil$, with $0<s_0\le\sin^2(\phi/4)$,
-every order-$N$ admissible sequence satisfies
+the development proves (Lean \lean{nr_closed_form}) the following. Fix any explicit lower bound
+$s_0$ with $0<s_0\le\sin^2(\phi/4)$, for instance $s_0=\sin^2(\phi/4)$; note that $s_0$ bounds
+$\sin^2(\phi/4)$, whereas the $s$ of Secs.~\ref{sec:jensen} and~\ref{sec:newrung} is
+$2\sin^2(\phi/4)$. Then every order-$N$
+admissible sequence with $N\ge500+\lceil\exp((11+|\log s_0|)/1.2)\rceil$ satisfies
 \begin{equation}
 \displaystyle
 T\;\ge\;4\,(N+1)\bigl(1-\mathrm{nrU}(q)\bigr),
 \qquad q=2N+2.
 \label{eq:closedform}
 \end{equation}
-At $\phi=\pi$ with $s_0=1/2$ this is $N\ge500+\lceil\exp((11+\log2)/1.2)\rceil$.
+At $\phi=\pi$ with $s_0=1/2$ this threshold is $N\ge500+\lceil\exp((11+\log2)/1.2)\rceil$.
 Since $\mathrm{nrU}(q)\to0$, the coefficient of $N$ approaches $4$, and
 $\liminf_{N\to\infty}T_{\min}(N,\phi)/N\ge4$ follows by elementary analysis. This is the
 closed-form face of the same rung: the constant $6$ and the threshold are conservative
@@ -820,8 +828,14 @@ $N\ge46000$ at $a=2.2$). It is superseded by Theorem~\ref{thm:newrung}, which ce
 each bandwidth directly with no $a$-parameter and no threshold profile. A weak-constant
 variant valid at every order with no threshold,
 $T\ge4\,(q!\,\sin^4(\phi/4)/(10^8\,q^4))^{1/q}$ (Lean \lean{eight_over_e_bound} with
-$C=10^8$), has limiting coefficient $8/\mathrm{e}$; it is likewise dominated by the ladder above.
-Both are kept here for the record only, and neither is used in any proof.
+$C=10^8$), has limiting coefficient $8/\mathrm{e}\approx2.943$, which \emph{exceeds} the Jensen
+coefficient $2\pi/\mathrm{e}\approx2.311$: because of its $10^8$ constant it is weaker than the
+Jensen bound below $N\approx73$ and stronger from there on, while the coefficient-$4$ closed
+form~\eqref{eq:closedform} exceeds it from $N\approx250$ and is proved for
+$N\ge17557$. The four rungs above are ordered by the argument each one uses rather than by
+their constants, and this variant is recorded here for that reason and for the intermediate
+range it covers, not as a fifth rung. Both items in this remark are kept for the record only,
+and neither is used in any other proof.
 \end{remark}
 
 \section{Numerical upper bounds for the hardest target}
@@ -852,7 +866,13 @@ U_1=Z(\pi),
 \frac{\mathrm{d}^kU_\lambda}{\mathrm{d}\lambda^k}\Big|_{\lambda=1}=0,\quad k\le N .
 \label{eq:numproblem}
 \end{equation}
-Every admissible angle list satisfies Definition~\ref{def:admissible}, so its cost bounds $T_{\min}(N,\pi)$ from above (not $\cstar(\pi)$, which no single order can bound). The angles $\alpha_j$ are free; fixing them all at $\pi$ is what makes the equiangular family of~\cite{Low2014} cost $T=(2N+1)\pi$.
+Every admissible angle list satisfies Definition~\ref{def:admissible}, so its cost bounds $T_{\min}(N,\pi)$ from above (not $\cstar(\pi)$, which no single order can bound). One known sequence per order has all of its nonzero $Z$ angles equal to $\pi$ and total cost
+$T=(2N+1)\pi$: at $N=1$, $\theta=(\pi,\pi,\pi)$ with
+$\alpha=(2\pi/3,-2\pi/3,2\pi/3)$ gives $U_1=Z(\pi)$ and $U_1'=0$ exactly. This is the
+transcription to the present model of the composite sequences of Ref.~\cite{Low2014}, which
+uses $2N$ pulses of area $\pi$ in addition to the target pulse of area $\pi$. The free angles
+$\alpha_j$ are otherwise unconstrained, and the local search improves on that cost at every
+order (Table~\ref{tab:num}).
 
 \paragraph{How the numbers were obtained and checked.}
 The minimizations used a truncated-Taylor propagator in the error variable with a
@@ -879,19 +899,22 @@ Table~\ref{tab:num} was then re-verified from scratch, with the three conditions
   $\delta(\eps)=\arccos\bigl(\lvert\langle U_{1+\eps},Z(\pi)\rangle\rvert/2\bigr)$ with
   $\langle U,V\rangle=\Tr(U^\dagger V)$ has local logarithmic slope rising towards $N+1$ as $\eps$
   decreases, saturating once $\delta$ reaches the round-off floor (e.g.\ the last three slopes are $1.98,1.99,2.00$ at $N=1$).
-  The third slope entries at $N\ge7$ sit at the round-off floor; they are platform-dependent and are not result digits, and no order is inferred from them. Where the
-  slope is resolved, the cancellation is carried to order $N$ and stops there.
+  The third slope entries at $N=9$--$11$ sit at the round-off floor (they are $4.43$, $1.67$,
+  $0.70$ against $N+1=10,11,12$); they are platform-dependent and are not result digits, and
+  no order is inferred from them. Where the slope is resolved, the cancellation is carried to
+  order $N$ and stops there.
 \end{enumerate}
 
 \begin{table}[t]\centering\small
 \caption{One admissible sequence per order at $\phi=\pi$, for $N\le12$: number $L$ of costly
-segments, cost $T=\sum_j\theta_j$ (so $T_{\min}(N,\pi)\le T$; no row is claimed to be optimal
-or to be a certified minimum), ratio to the equiangular cost $(2N+1)\pi$ of
+segments, cost $T=\sum_j\theta_j$ in radians (so $T_{\min}(N,\pi)\le T$; no row is claimed to
+be optimal or to be a certified minimum), ratio to the reference cost $(2N+1)\pi$ of
 Ref.~\cite{Low2014}, and the independent re-verification described in the text---nominal
 mismatch, dimensionless flatness residual
 $\rho_N=\max_{k\le N}\lVert u_k\rVert/\tauvar^k$ of~\eqref{eq:Ukbound} with $\tauvar=T/2$, and
 the last three local logarithmic slopes of $\delta(\eps)$, to be read against $N+1$. The angle
-lists are distributed with the data set of Ref.~\cite{DataRepo}.}
+lists are distributed with the data set of Ref.~\cite{DataRepo}; slope entries that sit at the
+round-off floor are not result digits.}
 \label{tab:num}
 \input{num_tables.tex}
 \end{table}
@@ -899,9 +922,9 @@ lists are distributed with the data set of Ref.~\cite{DataRepo}.}
 \begin{figure}[t]\centering
 \includegraphics[width=0.93\linewidth]{fignum_num.pdf}
 \caption{The same data as Table~\ref{tab:num}. (a) Cost found by the local search, against the
-equiangular cost $(2N+1)\pi$ and the coefficient-$4$ line $4N$; the straight line is the fit
+reference cost $(2N+1)\pi$ and the coefficient-$4$ line $4N$; the straight line is the fit
 $T\approx5.26N+2.81$ to the branch $N\le8$, whose residuals are below $0.12$. (b) The same cost
-divided by $N$, against the proved lower bound $4$ and $(2N+1)\pi/N$; the dashed line is
+divided by $N$; the horizontal references are the proved lower bound $4$ and
 $2\pi\approx6.28$, which the values at $N=1,2$ exceed. (c) The deviation $\delta(\eps)$ on a
 log-log grid for $N=1,3,6,12$, with its local slope; the dashed line has slope $2$, the smallest
 order appearing in the figure, and each curve is drawn only while $\delta$ stays above the
@@ -910,7 +933,8 @@ round-off floor.}
 \end{figure}
 
 \paragraph{What the numbers say.}
-Write $T_{\mathrm{num}}(N,\pi)$ for the cost of the sequence found at order $N$; by construction
+Fig.~\ref{fig:num} shows the same data graphically. Write $T_{\mathrm{num}}(N,\pi)$ for the cost
+of the sequence found at order $N$; by construction
 $T_{\min}(N,\pi)\le T_{\mathrm{num}}(N,\pi)$, and the two need not be equal. Over the range in
 which the search depth is uniform, $N\le8$, those upper bounds increase by $5.2\pm0.3$ per
 order,
@@ -920,7 +944,7 @@ T_{\mathrm{num}}(N,\pi)\approx5.26\,N+2.81 ,
 with increments $5.20,5.20,5.24,5.27,5.19,5.45,5.26$ and residuals below $0.119$. Every ratio
 $T/[(2N+1)\pi]$ lies between $0.839$ and $0.926$, and every ratio $T/N$ stays above the proved
 coefficient $4$: it exceeds $2\pi$ at $N=1,2$ and falls below it from $N=3$ on, reaching its
-smallest value $5.62$ at $N=8$. Part of the gain over the equiangular family may come from the
+smallest value $5.62$ at $N=8$. Part of the gain over that sequence may come from the
 free angles alone---that family fixes every $\alpha_j$ at $\pi$ for algebraic
 convenience, whereas~\eqref{eq:numproblem} leaves them free---but how much of it is available in
 this way is a question these numbers do not answer.
@@ -940,15 +964,15 @@ nothing more. In particular:
   come from a different seeding and are visibly looser---the increments of Table~\ref{tab:num}
   cannot be extrapolated in $N$.
 \item The segment numbers $L$ are those found by the search, not the smallest possible ones, and
-  the comparison with the equiangular family is made at equal order $N$ only.
+  the comparison with that reference sequence is made at equal order $N$ only.
 \end{itemize}
 
 None of this section enters the proofs of Theorems~\ref{thm:elementary}, \ref{thm:jensen}
 and~\ref{thm:newrung}. The one statement the data do establish is independent of optimality: the
-equiangular cost $(2N+1)\pi$ is not optimal at any order considered, since every listed cost is
+reference cost $(2N+1)\pi$ is not optimal at any order considered, since every listed cost is
 strictly below it, by a factor between $0.839$ and $0.926$. Closing the gap
 $4\le\cstar(\pi)\le2\pi$ therefore requires either a construction in the free-$X$ model that
-beats the equiangular family, or a proof that no construction attains $4$.
+beats that construction, or a proof that no construction attains $4$.
 
 \input{verification.tex}
 
@@ -1017,9 +1041,12 @@ the calibration factor
 \Bigl(32\,\eta_2\,q^2+44+2\Bigl(12+\frac{16}{27}\Bigr)\eta_1\Bigr)\,}\,.
 \label{eq:ccal}
 \end{equation}
-where the square root covers the whole product (Lean \lean{nrCcal}; here
-$\eta_i=\eta_i(\mathrm{e}^{-\alpha(\tauvar,q)})$). The coefficient bound behind~\eqref{eq:e2star}
-is \lean{fcoef_sharp} (headline \lean{bessel_L1}); the tail sum is \lean{bessel_L2}.
+Here the square root covers the whole product and $\eta_i$ abbreviates
+$\eta_i(\mathrm{e}^{-\alpha(\tauvar,q)})$ (Lean \lean{nrCcal}). The symbols $\tauvar$ and $q$ are
+those of the paper, and $k>\tauvar$ is the tail index of~\eqref{eq:besseldefs}. The coefficient
+bound behind~\eqref{eq:e2star} is the lemma \lean{fcoef_sharp}; the
+tail sum is the lemma \lean{bessel_L2}. The quantity $\mathrm{nrU}(q)$ of
+Sec.~\ref{sec:newrung} is defined in~\eqref{eq:nrU}, and $\mathrm{nrE2}$ is $E_2$ below.
 
 \subsection{Realization and the kernel bound}
 
@@ -1039,8 +1066,8 @@ optimization (Lean \lean{kap_L1_le}, headline \lean{realize_L1}):
 The inputs are the band error $\|\Psi\|\le\mathrm{nrE2}$ (Lean \lean{nr_sup_le}) and the
 derivative bounds through the Chebyshev tail (Lean \lean{nr_D1_le}, \lean{nr_D2_le},
 assembled in \lean{nr_kappa_le}). With $\mathrm{nrE2}\le\mathrm{nrE2star}$ this is the
-quantitative heart of the proof: all dependence on $\tauvar$ has disappeared except for
-the hypothesis $\tauvar<q$.
+quantitative heart of the proof: no tunable parameter beyond $\tauvar$ and $q$ enters, and the
+only condition on $\tauvar$ is the hypothesis $\tauvar<q$.
 
 The scope distinctions are recorded in Sec.~\ref{sec:formal}: the elementary and Jensen
 rungs and the exact criterion are machine-checked end to end, while the passage from the
@@ -1053,7 +1080,8 @@ in the paper and no formalized infimum is claimed.
 The angle lists behind Table~\ref{tab:num} are distributed with the data set of
 Ref.~\cite{DataRepo}, in the convention in which they were verified. For every order $N\le12$ at
 $\phi=\pi$ the data set gives the $L$ costly angles $\theta_j$ and the $L$ free angles
-$\alpha_j$ in units of $\pi$, both in the \emph{time order} of the sequence: $\alpha_j$ is the
+$\alpha_j$ in radians (the printable listing divides them by $\pi$), both in the \emph{time
+order} of the sequence: $\alpha_j$ is the
 free rotation that follows the costly segment $\theta_j$, and the first entries are the ones
 applied first. The product that was verified is therefore
 \[
