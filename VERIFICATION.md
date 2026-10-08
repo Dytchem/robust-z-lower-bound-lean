@@ -2,7 +2,7 @@
 
 ## The current development — three trees
 
-The results quoted in the paper's Table IV live in `lean_sharp/{wC,wF,wM}`. Each tree carries its
+The results quoted in the document's Table IV live in `lean_sharp/{wC,wF,wM}`. Each tree carries its
 own `lakefile.toml`, `lake-manifest.json` and `lean-toolchain`, so it builds on its own with
 
 ```sh
@@ -19,7 +19,7 @@ cd lean_sharp/wC && lake exe cache get && lake build     # likewise wF, wM
   or `axiom`; the only matches are inside comments.
 * The `Audit*.lean` files print the axioms of the headline declarations with `#print axioms`;
   running them reproduces the list `[propext, Classical.choice, Quot.sound]` recorded in the
-  paper's Sec. VIII C.
+  document's Sec. VIII C.
 * Each tree ships the `build_*.log` of a successful build of that tree.
 
 Everything below records the **superseded first revision** (a single tree at the repository root,
@@ -78,7 +78,7 @@ Statements read off the sources (`RobustZ/*.lean`); `cost θ` is the total `Z`-e
 |---|---|---|
 | `elementary_bound` | `RobustZ/ElementaryBound.lean` | `0 < φ ≤ π`: `2·(2·(2N+2)!·sin²(φ/4))^{1/(2N+2)} ≤ cost θ` |
 | `elementary_bound_pi` | `RobustZ/ElementaryBound.lean` | `φ = π`: `2·((2N+2)!)^{1/(2N+2)} ≤ cost θ` (`q = 2N+2`) |
-| `elementary_gt_four_over_e` | `RobustZ/ElementaryBound.lean` | `4(N+1)/e < 2·((2N+2)!)^{1/(2N+2)}`, i.e. the elementary bound dominates the paper's `4/e` per order |
+| `elementary_gt_four_over_e` | `RobustZ/ElementaryBound.lean` | `4(N+1)/e < 2·((2N+2)!)^{1/(2N+2)}`, i.e. the elementary bound dominates the document's `4/e` per order |
 | `endgame_bound` | `RobustZ/CollarConc.lean` | `a ≥ 2`, `N ≥ effN0End K₀ a`: `4(N+1)·(1 − a·(log(2N+2)/(2N+2))^{2/3}) ≤ cost θ` |
 | `endgame_bound_of_le` | `RobustZ/CollarConc.lean` | same with `effN0End K a` for any `K ≥ K₀` |
 | `endgame_bound_2_3_num` | `RobustZ/CollarConc.lean` | `a = 2.3`, `N ≥ 5010` |
@@ -221,7 +221,7 @@ changes how mathlib is located, not what is compiled — see `README.md`.
 
 ## Scope notes
 
-* The paper's numerical tables (heuristic local-search **upper** bounds on `T`) are not
+* The document's numerical tables (heuristic local-search **upper** bounds on `T`) are not
   formalised and are not proved here.
 * `N₀` is large (`5010` for `a = 2.3`, `46000` for `a = 2.2`) because of deliberately
   conservative constant bookkeeping, not because of a limitation of the method.

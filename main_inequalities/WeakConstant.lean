@@ -1,5 +1,5 @@
 /-
-Weak-constant `8/e` variant (paper Remark 9), coefficient `8/e ≈ 2.943`:
+Weak-constant `8/e` variant (document Remark 9), coefficient `8/e ≈ 2.943`:
 
   T ≥ 4 (q! sin⁴(φ/4) / (10⁸ q⁴))^{1/q},   q = 2N+2,   0 < φ ≤ π.
 

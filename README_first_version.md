@@ -3,8 +3,8 @@
 Lean 4 + Mathlib formalisation of
 
 > *Explicit Finite-Order Lower Bounds for High-Order Robust Composite `Z` Rotations*
-> — the paper is in [`paper/main.pdf`](paper/main.pdf) (APS/REVTeX submission format);
-> the single-spaced build for reading and for arXiv is [`paper/main_arxiv.pdf`](paper/main_arxiv.pdf).
+> — the document is in [`document/main.pdf`](document/main.pdf) (REVTeX, double-spaced);
+> the single-spaced build is [`document/main_arxiv.pdf`](document/main_arxiv.pdf).
 
 The development proves, with every constant explicit, that the total `Z`-evolution angle `T` of an
 order-`N` robust composite `Z` rotation grows at least linearly in `N`, with two complementary
@@ -19,9 +19,9 @@ $$\text{corollary:}\quad \liminf_{N\to\infty} T_{\min}(N,\phi)/N \ge 4 \qquad (0
 Everything below is checked by the Lean kernel; the only axioms used are `propext`,
 `Classical.choice` and `Quot.sound` (see [Audit](#audit)).
 
-## Current development — the four rungs of the paper
+## Current development — the four rungs of the document
 
-The paper's results are formalised in three independent trees under
+The document's results are formalised in three independent trees under
 [`lean_sharp/`](lean_sharp/), each with its own `lakefile.toml`, `lake-manifest.json` and
 `lean-toolchain` (see [`lean_sharp/README.md`](lean_sharp/README.md) for the build commands):
 
@@ -34,11 +34,11 @@ The paper's results are formalised in three independent trees under
 | `8/e` variant | `eight_over_e_bound` | `wM/RobustZ/EightOverE.lean` |
 | coefficient, with side conditions | `c_ge_four`, `c_ge_four_or_grows` | `wC/RobustZ/Theorem.lean` |
 
-These names and paths are the ones the paper's Table IV refers to.
+These names and paths are the ones the document's Table IV refers to.
 
 > The sections below describe the **superseded first version** of the development, kept at the
 > repository root and tagged `v1.0.0`: it proves the elementary bound together with the older
-> threshold-profile mechanism (the paper's Remark 9 history).
+> threshold-profile mechanism (the document's Remark 9 history).
 
 
 ## The explicit bounds, and where they live
@@ -47,7 +47,7 @@ These names and paths are the ones the paper's Table IV refers to.
 | --- | --- | --- |
 | `RobustZ.elementary_bound_pi` | `RobustZ/ElementaryBound.lean` | `Admissible N π L α θ → 2 * ((2*N+2)!)^(1/(2*N+2)) ≤ cost θ` |
 | `RobustZ.elementary_bound` | `RobustZ/ElementaryBound.lean` | the general `φ` version, `2·(2·(2N+2)!·sin²(φ/4))^{1/(2N+2)} ≤ cost θ` for `0 < φ ≤ π` |
-| `RobustZ.elementary_gt_four_over_e` | `RobustZ/ElementaryBound.lean` | `4(N+1)/e < 2·((2N+2)!)^{1/(2N+2)}` — the elementary bound dominates the paper's `4/e` per order |
+| `RobustZ.elementary_gt_four_over_e` | `RobustZ/ElementaryBound.lean` | `4(N+1)/e < 2·((2N+2)!)^{1/(2N+2)}` — the elementary bound dominates the document's `4/e` per order |
 | `RobustZ.endgame_bound` | `RobustZ/CollarConc.lean` | `a ≥ 2`, `N ≥ effN0End K₀ a`: `4(N+1)(1 − a(log(2N+2)/(2N+2))^{2/3}) ≤ cost θ` |
 | `RobustZ.endgame_bound_2_3_num` | `RobustZ/CollarConc.lean` | the same at `a = 2.3`, `N ≥ 5010` |
 | `RobustZ.endgame_bound_2_2_num` | `RobustZ/CollarConc.lean` | the same at `a = 2.2`, `N ≥ 46000` |
@@ -141,7 +141,7 @@ $$T_{\min}(N, \varphi) = \inf \mathrm{costs}(N, \varphi).$$
 **Scalar error carrier.** $h(\lambda) = 1 - \frac{1}{2} \mathrm{Tr}[U_1^{\dagger} U_\lambda]$
 (Lean: `h L α θ λ`), with $0 \le h \le 2$ (`Elementary.h_bounds`).
 
-**Asymptotic theorem (paper Theorem 1, first inequality).** For every $\varphi$ with $0 < \varphi \le \pi$, if
+**Asymptotic theorem (document Theorem 1, first inequality).** For every $\varphi$ with $0 < \varphi \le \pi$, if
 an admissible construction exists at every order $N$, then
 
 $$4 \le \liminf_{N \to \infty} \frac{T_{\min}(N, \varphi)}{N} .$$
@@ -159,9 +159,9 @@ theorem RobustZ.c_ge_four (φ : ℝ) (hφ0 : 0 < φ) (hφπ : φ ≤ Real.pi)
 
 * `hne` (an admissible construction at every order) keeps the infimum away from its junk value:
   Mathlib defines `sInf ∅ = 0`, so without it the unqualified statement would be false rather than
-  vacuous for a target admitting no admissible construction. Mathematically it is the paper's
+  vacuous for a target admitting no admissible construction. Mathematically it is the document's
   implicit standing assumption; for $\varphi = \pi$ it is supplied by the equiangular construction
-  quoted in the paper.
+  quoted in the document.
 * `hbdd` ($T_{\min}(N,\varphi)/N$ eventually bounded above) is the side condition that
   `Filter.le_liminf_of_le` needs. On $\mathbb{R}$, the liminf is the supremum of the eventual lower
   bounds, and that supremum is junk (`0`) on a set which is not bounded above — so boundedness is
@@ -278,7 +278,7 @@ individual module compilations are memory-heavy.
 | `M5Prelim.lean` | Self-contained API lemmas for the final assembly (`h_one`, `le_Tmin_of_forall`, …), using only the frozen M2 layer. |
 | `M5Bridge.lean` | Bridges M4 to M3: composes `approxPoly τ k` with the linear substitution `u ↦ u/τ` to get `scaledApprox`. |
 | `M5Apply.lean` | Applies M3 + M4 to `h(0)`, giving the pointwise bound `h(0) ≤ 8√(C₁C₂)` for admissible constructions. |
-| `M5Scaled.lean` | The τ-uniform version at the paper's scale `B = ετ/q²`: the M3′ application, the second-derivative Chebyshev collar bound, the collar bounds `M₁`, `M₂`, and the sharpened `C₁C₂ ≤ 3000(1+K)(1+4/(1-e^{-δ'}))e^{δ'} q⁸ e^{-ηq}`. |
+| `M5Scaled.lean` | The τ-uniform version at the document's scale `B = ετ/q²`: the M3′ application, the second-derivative Chebyshev collar bound, the collar bounds `M₁`, `M₂`, and the sharpened `C₁C₂ ≤ 3000(1+K)(1+4/(1-e^{-δ'}))e^{δ'} q⁸ e^{-ηq}`. |
 | `M5Sharp.lean` | Replaces the `q⁸` bookkeeping by the sharp `ε`-linear product bound at the scale `B = ετ/q²`, using the collar constants as *hypotheses* (`mul_B_M1_le_sharp`). |
 | `M5Quad.lean` | The `ε`-independent scale `B = τ/q²`, giving a quadratic (`ε²`) product bound (`mul_B_M1_le_quad`); the one new input lemma contains no `ε`. |
 | `M5Sqrt.lean` | The `B = √ε` product/criterion layer that plugs directly into the existing `FinalSmall` chain (criterion `ε^{3/2} < δ²/(64·Csharp·τ)`). |
@@ -294,7 +294,7 @@ individual module compilations are memory-heavy.
 
 | File | Content |
 | --- | --- |
-| `ElementaryBound.lean` | The paper's §4 elementary bound: `τ^q ≥ 2·q!·sin²(φ/4)` from one Taylor–Lagrange step at the endpoint plus flatness doubling, `elementary_bound` / `elementary_bound_pi`, and the Stirling-free `elementary_gt_four_over_e`. |
+| `ElementaryBound.lean` | The document's §4 elementary bound: `τ^q ≥ 2·q!·sin²(φ/4)` from one Taylor–Lagrange step at the endpoint plus flatness doubling, `elementary_bound` / `elementary_bound_pi`, and the Stirling-free `elementary_gt_four_over_e`. |
 | `CutoffExplicit.lean` | `K₀ = 21.1`: explicit uniform bounds `\|σ'\| ≤ K₀`, `\|σ''\| ≤ K₀` for `Real.smoothTransition`, by six-branch rational estimates, and the resulting `\|χ'\| ≤ K₀/B`, `\|χ''\| ≤ K₀/B²`. |
 | `SharpDeriv.lean` | Sharp collar derivative bounds (original constants `Cd1 = 7`, `Cd2 = 384`). |
 | `SharpDerivGen.lean` | Generalises them from `ρ ≤ 1/32` to `ρ < 1`: general geometric-series bounds with explicit `1/(1-ρ)` constants, splitting `(k+j)² ≤ 2k² + 2j²`, `(k+j)⁴ ≤ 8k⁴ + 8j⁴`; the `1/(1-r')` factors cancel against the honest tail constant `ε_h ≤ ε(1-r')/2`. |
@@ -346,7 +346,7 @@ individual module compilations are memory-heavy.
 
 ## Scope
 
-* The numerical tables and figures of the paper (local-search **upper** bounds on `T`) are not
+* The numerical tables and figures of the document (local-search **upper** bounds on `T`) are not
   formalised here and should not be read as proved.
 * `hne` and `hbdd` in `c_ge_four` are formalisation-side bookkeeping hypotheses, as explained
   above; `c_ge_four_or_grows` is the version without `hbdd`. The new finite-order bounds
@@ -355,10 +355,10 @@ individual module compilations are memory-heavy.
 * The naive endpoint identity `h(0) = 1 - cos(φ/2)` is **false** in general; the true value is
   `1 - cos(φ/2)·cos(A/2)`. The proof uses the one-sided bound `h(0) ≥ 1 - cos(φ/2)`, which is valid
   for `0 ≤ φ ≤ π`. `HTrace.lean` and `HTraceLower.lean` keep both statements separate.
-* The paper's `2/e` estimate (direct propagator Taylor estimate) is not a separate development
+* The document's `2/e` estimate (direct propagator Taylor estimate) is not a separate development
   here: it is implied by the formalised `elementary_bound`, which proves the stronger `4/e`
   coefficient.
-* Exact `4N` is not claimed. The LP-certified numerical constructions accompanying the paper
+* Exact `4N` is not claimed. The LP-certified numerical constructions accompanying the document
   (numerical work, not part of this repository) show that the band + `q`-th order zero +
   boundedness + endpoint-value constraints alone already admit `T < 4N` from `N ≈ 21` on, so a
   purely carrier-based argument cannot reach `T ≥ 4N`.
@@ -413,8 +413,8 @@ across the four lists report exactly `[propext, Classical.choice, Quot.sound]`, 
 
 45 modules under `RobustZ/` (20935 lines) plus the root aggregator `RobustZ.lean` (41 lines),
 20976 lines in total. Toolchain `leanprover/lean4:v4.34.1`; mathlib4 pinned at tag `v4.34.1`
-(`d13f23b723b8a846827a245b89c10fc7d3f11612`) via `lake-manifest.json`. The paper is
-[`paper/main.pdf`](paper/main.pdf).
+(`d13f23b723b8a846827a245b89c10fc7d3f11612`) via `lake-manifest.json`. The document is
+[`document/main.pdf`](document/main.pdf).
 
 ## License
 

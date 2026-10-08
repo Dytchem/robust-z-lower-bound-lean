@@ -1051,10 +1051,10 @@ lemma nr_tight_criterion {τ : ℝ} {q : ℕ} {C0 E0 : ℝ}
   exact lt_of_le_of_lt step2 hfin
 /-! ## §4. Tight certified numbers. -/
 
-/-- Certified tight number at `N = 12` (`φ = π`): `cost θ ≥ 28`, via the tight criterion
+/-- Certified tight number at `N = 12` (`φ = π`): `cost θ > 28`, via the tight criterion
 at `τ = 14`, `q = 26` (criterion value `≈ 0.32 < 1/2`). -/
 theorem cert_N12_tight {L : ℕ} {α θ : Fin L → ℝ}
-    (hAdm : Admissible 12 Real.pi L α θ) : 28 ≤ cost θ := by
+    (hAdm : Admissible 12 Real.pi L α θ) : 28 < cost θ := by
   have hmain : nrCcal_tight (14:ℝ) 26 * (((26:ℕ):ℝ)) ^ 2
       * nrE2star (14:ℝ) 26 < Real.sin (Real.pi / 4) ^ 2 := by
     rw [sin_pi_div_four_sq]
@@ -1167,13 +1167,13 @@ theorem cert_N12_tight {L : ℕ} {α θ : Fin L → ℝ}
     (hφπ := le_rfl) (hAdm := hAdm) (τ := (14 : ℝ)) (hτ1 := by norm_num)
     (hlt := by norm_num) hmain
   calc (28:ℝ) = 2 * (14:ℝ) := by norm_num
-    _ ≤ cost θ := le_of_lt hcost
+    _ < cost θ := hcost
 
 
-/-- Certified tight number at `N = 11` (`φ = π`): `cost θ ≥ 24`, via the tight criterion
+/-- Certified tight number at `N = 11` (`φ = π`): `cost θ > 24`, via the tight criterion
 at `τ = 12`, `q = 24` (criterion value `≈ 0.24 < 1/2`). -/
 theorem cert_N11_tight {L : ℕ} {α θ : Fin L → ℝ}
-    (hAdm : Admissible 11 Real.pi L α θ) : 24 ≤ cost θ := by
+    (hAdm : Admissible 11 Real.pi L α θ) : 24 < cost θ := by
   have hmain : nrCcal_tight (12:ℝ) 24 * (((24:ℕ):ℝ)) ^ 2
       * nrE2star (12:ℝ) 24 < Real.sin (Real.pi / 4) ^ 2 := by
     rw [sin_pi_div_four_sq]
@@ -1286,13 +1286,13 @@ theorem cert_N11_tight {L : ℕ} {α θ : Fin L → ℝ}
     (hφπ := le_rfl) (hAdm := hAdm) (τ := (12 : ℝ)) (hτ1 := by norm_num)
     (hlt := by norm_num) hmain
   calc (24:ℝ) = 2 * (12:ℝ) := by norm_num
-    _ ≤ cost θ := le_of_lt hcost
+    _ < cost θ := hcost
 
 
-/-- Certified tight number at `N = 10` (`φ = π`): `cost θ ≥ 22`, via the tight criterion
+/-- Certified tight number at `N = 10` (`φ = π`): `cost θ > 22`, via the tight criterion
 at `τ = 11`, `q = 22` (criterion value `≈ 0.21 < 1/2`). -/
 theorem cert_N10_tight {L : ℕ} {α θ : Fin L → ℝ}
-    (hAdm : Admissible 10 Real.pi L α θ) : 22 ≤ cost θ := by
+    (hAdm : Admissible 10 Real.pi L α θ) : 22 < cost θ := by
   have hmain : nrCcal_tight (11:ℝ) 22 * (((22:ℕ):ℝ)) ^ 2
       * nrE2star (11:ℝ) 22 < Real.sin (Real.pi / 4) ^ 2 := by
     rw [sin_pi_div_four_sq]
@@ -1405,13 +1405,13 @@ theorem cert_N10_tight {L : ℕ} {α θ : Fin L → ℝ}
     (hφπ := le_rfl) (hAdm := hAdm) (τ := (11 : ℝ)) (hτ1 := by norm_num)
     (hlt := by norm_num) hmain
   calc (22:ℝ) = 2 * (11:ℝ) := by norm_num
-    _ ≤ cost θ := le_of_lt hcost
+    _ < cost θ := hcost
 
 
-/-- Certified tight number at `N = 9` (`φ = π`): `cost θ ≥ 18`, via the tight criterion
+/-- Certified tight number at `N = 9` (`φ = π`): `cost θ > 18`, via the tight criterion
 at `τ = 9`, `q = 20` (criterion value `≈ 0.05 < 1/2`). -/
 theorem cert_N9_tight {L : ℕ} {α θ : Fin L → ℝ}
-    (hAdm : Admissible 9 Real.pi L α θ) : 18 ≤ cost θ := by
+    (hAdm : Admissible 9 Real.pi L α θ) : 18 < cost θ := by
   have hmain : nrCcal_tight (9:ℝ) 20 * (((20:ℕ):ℝ)) ^ 2
       * nrE2star (9:ℝ) 20 < Real.sin (Real.pi / 4) ^ 2 := by
     rw [sin_pi_div_four_sq]
@@ -1525,13 +1525,13 @@ theorem cert_N9_tight {L : ℕ} {α θ : Fin L → ℝ}
     (hφπ := le_rfl) (hAdm := hAdm) (τ := (9 : ℝ)) (hτ1 := by norm_num)
     (hlt := by norm_num) hmain
   calc (18:ℝ) = 2 * (9:ℝ) := by norm_num
-    _ ≤ cost θ := le_of_lt hcost
+    _ < cost θ := hcost
 
 
-/-- Certified tight number at `N = 8` (`φ = π`): `cost θ ≥ 16`, via the tight criterion
+/-- Certified tight number at `N = 8` (`φ = π`): `cost θ > 16`, via the tight criterion
 at `τ = 8`, `q = 18` (criterion value `≈ 0.12 < 1/2`). -/
 theorem cert_N8_tight {L : ℕ} {α θ : Fin L → ℝ}
-    (hAdm : Admissible 8 Real.pi L α θ) : 16 ≤ cost θ := by
+    (hAdm : Admissible 8 Real.pi L α θ) : 16 < cost θ := by
   have hmain : nrCcal_tight (8:ℝ) 18 * (((18:ℕ):ℝ)) ^ 2
       * nrE2star (8:ℝ) 18 < Real.sin (Real.pi / 4) ^ 2 := by
     rw [sin_pi_div_four_sq]
@@ -1644,13 +1644,13 @@ theorem cert_N8_tight {L : ℕ} {α θ : Fin L → ℝ}
     (hφπ := le_rfl) (hAdm := hAdm) (τ := (8 : ℝ)) (hτ1 := by norm_num)
     (hlt := by norm_num) hmain
   calc (16:ℝ) = 2 * (8:ℝ) := by norm_num
-    _ ≤ cost θ := le_of_lt hcost
+    _ < cost θ := hcost
 
 
-/-- Certified tight number at `N = 7` (`φ = π`): `cost θ ≥ 14`, via the tight criterion
+/-- Certified tight number at `N = 7` (`φ = π`): `cost θ > 14`, via the tight criterion
 at `τ = 7`, `q = 16` (criterion value `≈ 0.09 < 1/2`). -/
 theorem cert_N7_tight {L : ℕ} {α θ : Fin L → ℝ}
-    (hAdm : Admissible 7 Real.pi L α θ) : 14 ≤ cost θ := by
+    (hAdm : Admissible 7 Real.pi L α θ) : 14 < cost θ := by
   have hmain : nrCcal_tight (7:ℝ) 16 * (((16:ℕ):ℝ)) ^ 2
       * nrE2star (7:ℝ) 16 < Real.sin (Real.pi / 4) ^ 2 := by
     rw [sin_pi_div_four_sq]
@@ -1765,13 +1765,13 @@ theorem cert_N7_tight {L : ℕ} {α θ : Fin L → ℝ}
     (hφπ := le_rfl) (hAdm := hAdm) (τ := (7 : ℝ)) (hτ1 := by norm_num)
     (hlt := by norm_num) hmain
   calc (14:ℝ) = 2 * (7:ℝ) := by norm_num
-    _ ≤ cost θ := le_of_lt hcost
+    _ < cost θ := hcost
 
 
-/-- Certified tight number at `N = 6` (`φ = π`): `cost θ ≥ 10`, via the tight criterion
+/-- Certified tight number at `N = 6` (`φ = π`): `cost θ > 10`, via the tight criterion
 at `τ = 5`, `q = 14` (criterion value `≈ 0.06 < 1/2`). -/
 theorem cert_N6_tight {L : ℕ} {α θ : Fin L → ℝ}
-    (hAdm : Admissible 6 Real.pi L α θ) : 10 ≤ cost θ := by
+    (hAdm : Admissible 6 Real.pi L α θ) : 10 < cost θ := by
   have hmain : nrCcal_tight (5:ℝ) 14 * (((14:ℕ):ℝ)) ^ 2
       * nrE2star (5:ℝ) 14 < Real.sin (Real.pi / 4) ^ 2 := by
     rw [sin_pi_div_four_sq]
@@ -1875,13 +1875,13 @@ theorem cert_N6_tight {L : ℕ} {α θ : Fin L → ℝ}
     (hφπ := le_rfl) (hAdm := hAdm) (τ := (5 : ℝ)) (hτ1 := by norm_num)
     (hlt := by norm_num) hmain
   calc (10:ℝ) = 2 * (5:ℝ) := by norm_num
-    _ ≤ cost θ := le_of_lt hcost
+    _ < cost θ := hcost
 
 
-/-- Certified tight number at `N = 5` (`φ = π`): `cost θ ≥ 8`, via the tight criterion
+/-- Certified tight number at `N = 5` (`φ = π`): `cost θ > 8`, via the tight criterion
 at `τ = 4`, `q = 12` (criterion value `≈ 0.04 < 1/2`). -/
 theorem cert_N5_tight {L : ℕ} {α θ : Fin L → ℝ}
-    (hAdm : Admissible 5 Real.pi L α θ) : 8 ≤ cost θ := by
+    (hAdm : Admissible 5 Real.pi L α θ) : 8 < cost θ := by
   have hmain : nrCcal_tight (4:ℝ) 12 * (((12:ℕ):ℝ)) ^ 2
       * nrE2star (4:ℝ) 12 < Real.sin (Real.pi / 4) ^ 2 := by
     rw [sin_pi_div_four_sq]
@@ -1996,7 +1996,7 @@ theorem cert_N5_tight {L : ℕ} {α θ : Fin L → ℝ}
     (hφπ := le_rfl) (hAdm := hAdm) (τ := (4 : ℝ)) (hτ1 := by norm_num)
     (hlt := by norm_num) hmain
   calc (8:ℝ) = 2 * (4:ℝ) := by norm_num
-    _ ≤ cost θ := le_of_lt hcost
+    _ < cost θ := hcost
 
 
 end RobustZ

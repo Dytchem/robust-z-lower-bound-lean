@@ -3,8 +3,8 @@
 How much `Z`-evolution is unavoidable if a target `Z` rotation must stay accurate to order `N`
 against an unknown error in the `Z` strength, when exact transverse (`X`) rotations are free?
 
-Paper: [`paper/main.pdf`](paper/main.pdf) (submission format) ·
-[`paper/main_arxiv.pdf`](paper/main_arxiv.pdf) (single-spaced) ·
+Document: [`document/main.pdf`](document/main.pdf) (double-spaced) ·
+[`document/main_arxiv.pdf`](document/main_arxiv.pdf) (single-spaced) ·
 verification page: <https://show.dytchem.cn/lean/>
 
 ## The model
@@ -19,7 +19,7 @@ verification page: <https://show.dytchem.cn/lean/>
 
 Every order-`N` robust sequence satisfies each of the following.
 
-**1. Direct Taylor bound (coefficient `2/e ≈ 0.736`), every `N`:**
+**1. Direct Taylor bound (coefficient `2/e ≈ 0.736`), every `N` — by hand, not in Lean:**
 
 $$T \ge 2\ [\ 2\ (N+1)!\ \sin(\phi/4)\ ]^{1/(N+1)}$$
 
@@ -35,10 +35,10 @@ $$T \ge \frac{\pi q}{e}\ \sin^{2/q}(\phi/4)$$
 
 $$T \ge 4\ [\ \frac{q!\ \sin^{4}(\phi/4)}{10^{8}\ q^{4}}\ ]^{1/q}$$
 
-**5. Exact criterion (coefficient `→ 4`) — an explicit, checkable inequality:**
+**5. Exact criterion (coefficient `→ 4`), `N ≥ 1` — an explicit, checkable inequality:**
 
-> If the closed-form quantity of the paper (§VI and Appendix A) falls below `sin²(φ/4)` at a
-> trial bandwidth `τ`, then `T > 2τ`.
+> If the closed-form quantity of the document (§VI and Appendix A) falls below `sin²(φ/4)` at a
+> trial bandwidth `1 ≤ τ < q`, then `T > 2τ`.
 
 At `φ = π` the criterion certifies, inside Lean and with every constant explicit,
 
@@ -48,7 +48,9 @@ and its closed form gives, for `N ≥ 17557`,
 
 $$T \ge 4(N+1)\ [\ 1 - 6\ (\log q / q)^{2/3}\ ],$$
 
-which is the linear growth `T ≥ (4+o(1)) N` and hence `liminf T_min / N ≥ 4`.
+which is the linear growth `T ≥ (4+o(1)) N`. In Lean the passage to `liminf T_min / N ≥ 4` carries
+two side conditions: an admissible sequence exists at every order, and `T_min(N,φ)/N` is bounded
+above — the second is what `linear_growth_or_grows` replaces by "or divergence to `+∞`".
 
 ### How the coefficients compare
 
@@ -58,7 +60,7 @@ which is the linear growth `T ≥ (4+o(1)) N` and hence `liminf T_min / N ≥ 4`
 | elementary | `4/e ≈ 1.472` | every `N` |
 | Jensen | `2π/e ≈ 2.311` | every `N` |
 | weak-constant variant | `8/e ≈ 2.943` | every `N` (constant `10⁸`) |
-| exact criterion | `→ 4` | every `N` (checkable); closed form from `N ≥ 17557` |
+| exact criterion | `→ 4` | every `N ≥ 1` (checkable); closed form from `N ≥ 17557` |
 
 The weak-constant variant overtakes the Jensen bound from about `N ≈ 73`, and is in turn
 overtaken by the exact criterion's closed form from about `N ≈ 250`.
@@ -94,9 +96,9 @@ cd lean_sharp/wC && lake exe cache get && lake build     # likewise wF, wM, once
 main_inequalities/verify.sh                              # checks the six files above
 ```
 
-The three trees remain the full development (54 + 35 + 47 modules); the direct Taylor bound (1) is
-proved on paper in three lines, not in Lean. In the development checkout Mathlib is required by
-path (`lean_sharp/*/lakefile.toml`), so a fresh clone should first replace that `require` by
+The three trees remain the full development (54 + 35 + 47 modules); bound (1) above is the only one
+without a Lean counterpart. In the development checkout Mathlib is required by path
+(`lean_sharp/*/lakefile.toml`), so a fresh clone should first replace that `require` by
 `git = "https://github.com/leanprover-community/mathlib4", rev = "v4.34.1"`.
 
 No `sorry`, `admit` or `axiom` occurs in the sources; every headline declaration depends only on
@@ -108,11 +110,11 @@ No `sorry`, `admit` or `axiom` occurs in the sources; every headline declaration
 | --- | --- |
 | `main_inequalities/` | each machine-checked bound of "The bounds", one file each, with `verify.sh` |
 | `lean_sharp/{wC,wF,wM}` | the full development (proof cores) — see [`lean_sharp/README.md`](lean_sharp/README.md) |
-| `paper/` | LaTeX sources, PDFs and the build script |
+| `document/` | LaTeX sources, PDFs and the build script |
 | `RobustZ/` | the superseded first version (tag `v1.0.0`); its documentation is in [`README_first_version.md`](README_first_version.md) |
 | `VERIFICATION.md` | build and audit records |
 
 The numerical side (local-search upper bounds, the angle lists and the figure scripts) is in the
-paper's data set: <https://show.dytchem.cn/files/code.zip>.
+document's data set: <https://show.dytchem.cn/files/code.zip>.
 
 License: Apache-2.0.

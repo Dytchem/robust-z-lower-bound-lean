@@ -233,10 +233,10 @@ theorem new_rung_final {N : ℕ} {φ : ℝ} {L : ℕ} {α θ : Fin L → ℝ}
 
 /-! ## §3. Task 2: certified numeric instances at `φ = π`. -/
 
-/-- Certified number at `N = 2` (`φ = π`): `cost θ ≥ 2`, via the exact criterion
+/-- Certified number at `N = 2` (`φ = π`): `cost θ > 2`, via the exact criterion
 at `τ = 1`, `q = 6` (criterion value `≈ 0.2715 < 1/2`). -/
 theorem cert_N2 {L : ℕ} {α θ : Fin L → ℝ}
-    (hAdm : Admissible 2 Real.pi L α θ) : 2 ≤ cost θ := by
+    (hAdm : Admissible 2 Real.pi L α θ) : 2 < cost θ := by
   have hmain12 : nrCcal (1:ℝ) 6 * (((6:ℕ):ℝ)) ^ 2
       * nrE2star (1:ℝ) 6 < Real.sin (Real.pi / 4) ^ 2 := by
     rw [sin_pi_div_four_sq]
@@ -365,12 +365,12 @@ theorem cert_N2 {L : ℕ} {α θ : Fin L → ℝ}
     (hφπ := le_rfl) (hAdm := hAdm) (τ := (1 : ℝ)) (hτ1 := by norm_num)
     (hlt := by norm_num) hmain12
   calc (2:ℝ) = 2 * (1:ℝ) := by norm_num
-    _ ≤ cost θ := le_of_lt hcost
+    _ < cost θ := hcost
 
-/-- Certified number at `N = 3` (`φ = π`): `cost θ ≥ 2`, via the exact criterion
+/-- Certified number at `N = 3` (`φ = π`): `cost θ > 2`, via the exact criterion
 at `τ = 1`, `q = 8` (criterion value `≈ 0.0007827 < 1/2`). -/
 theorem cert_N3 {L : ℕ} {α θ : Fin L → ℝ}
-    (hAdm : Admissible 3 Real.pi L α θ) : 2 ≤ cost θ := by
+    (hAdm : Admissible 3 Real.pi L α θ) : 2 < cost θ := by
   have hmain12 : nrCcal (1:ℝ) 8 * (((8:ℕ):ℝ)) ^ 2
       * nrE2star (1:ℝ) 8 < Real.sin (Real.pi / 4) ^ 2 := by
     rw [sin_pi_div_four_sq]
@@ -501,12 +501,12 @@ theorem cert_N3 {L : ℕ} {α θ : Fin L → ℝ}
     (hφπ := le_rfl) (hAdm := hAdm) (τ := (1 : ℝ)) (hτ1 := by norm_num)
     (hlt := by norm_num) hmain12
   calc (2:ℝ) = 2 * (1:ℝ) := by norm_num
-    _ ≤ cost θ := le_of_lt hcost
+    _ < cost θ := hcost
 
-/-- Certified number at `N = 4` (`φ = π`): `cost θ ≥ 4`, via the exact criterion
+/-- Certified number at `N = 4` (`φ = π`): `cost θ > 4`, via the exact criterion
 at `τ = 2`, `q = 10` (criterion value `≈ 0.01095 < 1/2`). -/
 theorem cert_N4 {L : ℕ} {α θ : Fin L → ℝ}
-    (hAdm : Admissible 4 Real.pi L α θ) : 4 ≤ cost θ := by
+    (hAdm : Admissible 4 Real.pi L α θ) : 4 < cost θ := by
   have hmain12 : nrCcal (2:ℝ) 10 * (((10:ℕ):ℝ)) ^ 2
       * nrE2star (2:ℝ) 10 < Real.sin (Real.pi / 4) ^ 2 := by
     rw [sin_pi_div_four_sq]
@@ -637,12 +637,12 @@ theorem cert_N4 {L : ℕ} {α θ : Fin L → ℝ}
     (hφπ := le_rfl) (hAdm := hAdm) (τ := (2 : ℝ)) (hτ1 := by norm_num)
     (hlt := by norm_num) hmain12
   calc (4:ℝ) = 2 * (2:ℝ) := by norm_num
-    _ ≤ cost θ := le_of_lt hcost
+    _ < cost θ := hcost
 
-/-- Certified number at `N = 5` (`φ = π`): `cost θ ≥ 6`, via the exact criterion
+/-- Certified number at `N = 5` (`φ = π`): `cost θ > 6`, via the exact criterion
 at `τ = 3`, `q = 12` (criterion value `≈ 0.1563 < 1/2`). -/
 theorem cert_N5 {L : ℕ} {α θ : Fin L → ℝ}
-    (hAdm : Admissible 5 Real.pi L α θ) : 6 ≤ cost θ := by
+    (hAdm : Admissible 5 Real.pi L α θ) : 6 < cost θ := by
   have hmain12 : nrCcal (3:ℝ) 12 * (((12:ℕ):ℝ)) ^ 2
       * nrE2star (3:ℝ) 12 < Real.sin (Real.pi / 4) ^ 2 := by
     rw [sin_pi_div_four_sq]
@@ -773,12 +773,12 @@ theorem cert_N5 {L : ℕ} {α θ : Fin L → ℝ}
     (hφπ := le_rfl) (hAdm := hAdm) (τ := (3 : ℝ)) (hτ1 := by norm_num)
     (hlt := by norm_num) hmain12
   calc (6:ℝ) = 2 * (3:ℝ) := by norm_num
-    _ ≤ cost θ := le_of_lt hcost
+    _ < cost θ := hcost
 
-/-- Certified number at `N = 6` (`φ = π`): `cost θ ≥ 8`, via the exact criterion
+/-- Certified number at `N = 6` (`φ = π`): `cost θ > 8`, via the exact criterion
 at `τ = 4`, `q = 14` (criterion value `≈ 0.02643 < 1/2`). -/
 theorem cert_N6 {L : ℕ} {α θ : Fin L → ℝ}
-    (hAdm : Admissible 6 Real.pi L α θ) : 8 ≤ cost θ := by
+    (hAdm : Admissible 6 Real.pi L α θ) : 8 < cost θ := by
   have hmain12 : nrCcal (4:ℝ) 14 * (((14:ℕ):ℝ)) ^ 2
       * nrE2star (4:ℝ) 14 < Real.sin (Real.pi / 4) ^ 2 := by
     rw [sin_pi_div_four_sq]
@@ -909,12 +909,12 @@ theorem cert_N6 {L : ℕ} {α θ : Fin L → ℝ}
     (hφπ := le_rfl) (hAdm := hAdm) (τ := (4 : ℝ)) (hτ1 := by norm_num)
     (hlt := by norm_num) hmain12
   calc (8:ℝ) = 2 * (4:ℝ) := by norm_num
-    _ ≤ cost θ := le_of_lt hcost
+    _ < cost θ := hcost
 
-/-- Certified number at `N = 7` (`φ = π`): `cost θ ≥ 12`, via the exact criterion
+/-- Certified number at `N = 7` (`φ = π`): `cost θ > 12`, via the exact criterion
 at `τ = 6`, `q = 16` (criterion value `≈ 0.1142 < 1/2`). -/
 theorem cert_N7 {L : ℕ} {α θ : Fin L → ℝ}
-    (hAdm : Admissible 7 Real.pi L α θ) : 12 ≤ cost θ := by
+    (hAdm : Admissible 7 Real.pi L α θ) : 12 < cost θ := by
   have hmain12 : nrCcal (6:ℝ) 16 * (((16:ℕ):ℝ)) ^ 2
       * nrE2star (6:ℝ) 16 < Real.sin (Real.pi / 4) ^ 2 := by
     rw [sin_pi_div_four_sq]
@@ -1039,12 +1039,12 @@ theorem cert_N7 {L : ℕ} {α θ : Fin L → ℝ}
     (hφπ := le_rfl) (hAdm := hAdm) (τ := (6 : ℝ)) (hτ1 := by norm_num)
     (hlt := by norm_num) hmain12
   calc (12:ℝ) = 2 * (6:ℝ) := by norm_num
-    _ ≤ cost θ := le_of_lt hcost
+    _ < cost θ := hcost
 
-/-- Certified number at `N = 8` (`φ = π`): `cost θ ≥ 12`, via the exact criterion
+/-- Certified number at `N = 8` (`φ = π`): `cost θ > 12`, via the exact criterion
 at `τ = 6`, `q = 18` (criterion value `≈ 0.0497 < 1/2`). -/
 theorem cert_N8 {L : ℕ} {α θ : Fin L → ℝ}
-    (hAdm : Admissible 8 Real.pi L α θ) : 12 ≤ cost θ := by
+    (hAdm : Admissible 8 Real.pi L α θ) : 12 < cost θ := by
   have hmain12 : nrCcal (6:ℝ) 18 * (((18:ℕ):ℝ)) ^ 2
       * nrE2star (6:ℝ) 18 < Real.sin (Real.pi / 4) ^ 2 := by
     rw [sin_pi_div_four_sq]
@@ -1169,12 +1169,12 @@ theorem cert_N8 {L : ℕ} {α θ : Fin L → ℝ}
     (hφπ := le_rfl) (hAdm := hAdm) (τ := (6 : ℝ)) (hτ1 := by norm_num)
     (hlt := by norm_num) hmain12
   calc (12:ℝ) = 2 * (6:ℝ) := by norm_num
-    _ ≤ cost θ := le_of_lt hcost
+    _ < cost θ := hcost
 
-/-- Certified number at `N = 9` (`φ = π`): `cost θ ≥ 14`, via the exact criterion
+/-- Certified number at `N = 9` (`φ = π`): `cost θ > 14`, via the exact criterion
 at `τ = 7`, `q = 20` (criterion value `≈ 0.007831 < 1/2`). -/
 theorem cert_N9 {L : ℕ} {α θ : Fin L → ℝ}
-    (hAdm : Admissible 9 Real.pi L α θ) : 14 ≤ cost θ := by
+    (hAdm : Admissible 9 Real.pi L α θ) : 14 < cost θ := by
   have hmain12 : nrCcal (7:ℝ) 20 * (((20:ℕ):ℝ)) ^ 2
       * nrE2star (7:ℝ) 20 < Real.sin (Real.pi / 4) ^ 2 := by
     rw [sin_pi_div_four_sq]
@@ -1299,12 +1299,12 @@ theorem cert_N9 {L : ℕ} {α θ : Fin L → ℝ}
     (hφπ := le_rfl) (hAdm := hAdm) (τ := (7 : ℝ)) (hτ1 := by norm_num)
     (hlt := by norm_num) hmain12
   calc (14:ℝ) = 2 * (7:ℝ) := by norm_num
-    _ ≤ cost θ := le_of_lt hcost
+    _ < cost θ := hcost
 
-/-- Certified number at `N = 10` (`φ = π`): `cost θ ≥ 20`, via the exact criterion
+/-- Certified number at `N = 10` (`φ = π`): `cost θ > 20`, via the exact criterion
 at `τ = 10`, `q = 22` (criterion value `≈ 0.2654 < 1/2`). -/
 theorem cert_N10 {L : ℕ} {α θ : Fin L → ℝ}
-    (hAdm : Admissible 10 Real.pi L α θ) : 20 ≤ cost θ := by
+    (hAdm : Admissible 10 Real.pi L α θ) : 20 < cost θ := by
   have hmain12 : nrCcal (10:ℝ) 22 * (((22:ℕ):ℝ)) ^ 2
       * nrE2star (10:ℝ) 22 < Real.sin (Real.pi / 4) ^ 2 := by
     rw [sin_pi_div_four_sq]
@@ -1433,12 +1433,12 @@ theorem cert_N10 {L : ℕ} {α θ : Fin L → ℝ}
     (hφπ := le_rfl) (hAdm := hAdm) (τ := (10 : ℝ)) (hτ1 := by norm_num)
     (hlt := by norm_num) hmain12
   calc (20:ℝ) = 2 * (10:ℝ) := by norm_num
-    _ ≤ cost θ := le_of_lt hcost
+    _ < cost θ := hcost
 
-/-- Certified number at `N = 11` (`φ = π`): `cost θ ≥ 22`, via the exact criterion
+/-- Certified number at `N = 11` (`φ = π`): `cost θ > 22`, via the exact criterion
 at `τ = 11`, `q = 24` (criterion value `≈ 0.1103 < 1/2`). -/
 theorem cert_N11 {L : ℕ} {α θ : Fin L → ℝ}
-    (hAdm : Admissible 11 Real.pi L α θ) : 22 ≤ cost θ := by
+    (hAdm : Admissible 11 Real.pi L α θ) : 22 < cost θ := by
   have hmain12 : nrCcal (11:ℝ) 24 * (((24:ℕ):ℝ)) ^ 2
       * nrE2star (11:ℝ) 24 < Real.sin (Real.pi / 4) ^ 2 := by
     rw [sin_pi_div_four_sq]
@@ -1567,12 +1567,12 @@ theorem cert_N11 {L : ℕ} {α θ : Fin L → ℝ}
     (hφπ := le_rfl) (hAdm := hAdm) (τ := (11 : ℝ)) (hτ1 := by norm_num)
     (hlt := by norm_num) hmain12
   calc (22:ℝ) = 2 * (11:ℝ) := by norm_num
-    _ ≤ cost θ := le_of_lt hcost
+    _ < cost θ := hcost
 
-/-- Certified number at `N = 12` (`φ = π`): `cost θ ≥ 24`, via the exact criterion
+/-- Certified number at `N = 12` (`φ = π`): `cost θ > 24`, via the exact criterion
 at `τ = 12`, `q = 26` (criterion value `≈ 0.04554 < 1/2`). -/
 theorem cert_N12 {L : ℕ} {α θ : Fin L → ℝ}
-    (hAdm : Admissible 12 Real.pi L α θ) : 24 ≤ cost θ := by
+    (hAdm : Admissible 12 Real.pi L α θ) : 24 < cost θ := by
   have hmain12 : nrCcal (12:ℝ) 26 * (((26:ℕ):ℝ)) ^ 2
       * nrE2star (12:ℝ) 26 < Real.sin (Real.pi / 4) ^ 2 := by
     rw [sin_pi_div_four_sq]
@@ -1701,6 +1701,6 @@ theorem cert_N12 {L : ℕ} {α θ : Fin L → ℝ}
     (hφπ := le_rfl) (hAdm := hAdm) (τ := (12 : ℝ)) (hτ1 := by norm_num)
     (hlt := by norm_num) hmain12
   calc (24:ℝ) = 2 * (12:ℝ) := by norm_num
-    _ ≤ cost θ := le_of_lt hcost
+    _ < cost θ := hcost
 
 end RobustZ

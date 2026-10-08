@@ -1,4 +1,4 @@
-# The current development — the four rungs of the paper
+# The current development — the four rungs of the document
 
 Three independent Lean 4 + Mathlib trees. Each carries its own `lakefile.toml`,
 `lake-manifest.json` and `lean-toolchain`, so it builds on its own:
@@ -24,4 +24,4 @@ cd wC && lake exe cache get && lake build     # likewise wF, wM
 
 No `sorry`, `admit` or `axiom` occurs in the sources; the `RobustZ/Audit*.lean` files print the
 axioms of the headline declarations with `#print axioms`. These names and paths are the ones the
-paper's Table IV refers to; the verification page is <https://show.dytchem.cn/lean/>.
+document's Table IV refers to; the verification page is <https://show.dytchem.cn/lean/>.

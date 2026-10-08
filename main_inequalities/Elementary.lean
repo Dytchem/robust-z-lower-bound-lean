@@ -1,5 +1,5 @@
 /-
-Elementary bound (paper Theorem 3), coefficient `4/e`:
+Elementary bound (document Theorem 3), coefficient `4/e`:
 
   T ≥ 2 (2 q! sin²(φ/4))^{1/q},   q = 2N+2,   0 < φ ≤ π.
 

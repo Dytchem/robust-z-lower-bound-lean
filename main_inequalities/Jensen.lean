@@ -1,5 +1,5 @@
 /-
-Jensen bound (paper Theorem 4), coefficient `2π/e`:
+Jensen bound (document Theorem 4), coefficient `2π/e`:
 
   T ≥ (π q / e) sin^{2/q}(φ/4),   q = 2N+2,   0 < φ ≤ π.
 

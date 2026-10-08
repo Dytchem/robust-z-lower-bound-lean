@@ -1,5 +1,5 @@
 /-
-Linear growth with coefficient `4` (paper Corollary 6):
+Linear growth with coefficient `4` (document Corollary 6):
 
   4 ≤ liminf_{N} T_min(N,φ) / N .
 

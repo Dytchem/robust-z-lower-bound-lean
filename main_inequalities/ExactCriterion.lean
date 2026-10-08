@@ -1,10 +1,10 @@
 /-
-Exact-criterion rung (paper Theorem 5), coefficient `→ 4`:
+Exact-criterion rung (document Theorem 5), coefficient `→ 4`:
 
   if   nrCcal_tight τ q · q² · nrE2star τ q  <  sin²(φ/4)   at a trial bandwidth
   `1 ≤ τ < q`, then `T > 2τ`,     q = 2N+2.
 
-`nrCcal_tight` and `nrE2star` are the explicit closed-form quantities of the paper (§VI).
+`nrCcal_tight` and `nrE2star` are the explicit closed-form quantities of the document (§VI).
 Proof core: `RobustZ.new_rung_final_tight` — `lean_sharp/wC/RobustZ/RungTight.lean`;
 the closed form below is `RobustZ.nr_closed_form` — `lean_sharp/wC/RobustZ/NewRung.lean`.
 -/
