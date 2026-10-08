@@ -18,6 +18,28 @@ $$\text{corollary:}\quad \liminf_{N\to\infty} T_{\min}(N,\phi)/N \ge 4 \qquad (0
 Everything below is checked by the Lean kernel; the only axioms used are `propext`,
 `Classical.choice` and `Quot.sound` (see [Audit](#audit)).
 
+## Current development — the four rungs of the paper
+
+The paper's results are formalised in three independent trees under
+[`lean_sharp/`](lean_sharp/), each with its own `lakefile.toml`, `lake-manifest.json` and
+`lean-toolchain` (see [`lean_sharp/README.md`](lean_sharp/README.md) for the build commands):
+
+| result | declaration | file |
+| --- | --- | --- |
+| elementary (`4/e`), every order | `elementary_bound`, `elementary_bound_pi` | `wC/RobustZ/ElementaryBound.lean` |
+| Jensen (`2π/e`), every order | `jensen_rung_final`, `jensen_rung_pi_final`, `jensen_ratio_tendsto` | `wF/RobustZ/JensenBridge.lean`, `wF/RobustZ/JensenRung.lean` |
+| exact criterion, coefficient `→ 4` | `new_rung_final`, `nr_closed_form` | `wC/RobustZ/RungFinal.lean`, `wC/RobustZ/NewRung.lean` |
+| certified integers at `φ = π` | `cert_N2`–`cert_N4`, `cert_N5_tight`–`cert_N12_tight` | `wC/RobustZ/RungFinal.lean`, `wC/RobustZ/RungTight.lean` |
+| `8/e` variant | `eight_over_e_bound` | `wM/RobustZ/EightOverE.lean` |
+| coefficient, with side conditions | `c_ge_four`, `c_ge_four_or_grows` | `wC/RobustZ/Theorem.lean` |
+
+These names and paths are the ones the paper's Table IV refers to.
+
+> The sections below describe the **superseded first version** of the development, kept at the
+> repository root and tagged `v1.0.0`: it proves the elementary bound together with the older
+> threshold-profile mechanism (the paper's Remark 9 history).
+
+
 ## The explicit bounds, and where they live
 
 | Lean name | File | Statement |

@@ -1,0 +1,368 @@
+⚠ [3303/3596] Replayed RobustZ.Flatness
+warning: RobustZ/Flatness.lean:204:30: This simp argument is unused:
+  Complex.mul_re
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Complex.smul_re, Complex.ofReal_re, Complex.ofReal_im]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/Flatness.lean:204:46: This simp argument is unused:
+  Complex.ofReal_re
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Complex.smul_re, Complex.mul_re, Complex.ofReal_im]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/Flatness.lean:204:65: This simp argument is unused:
+  Complex.ofReal_im
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Complex.smul_re, Complex.mul_re, Complex.ofReal_re]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [3304/3596] Replayed RobustZ.ExpSum
+warning: RobustZ/ExpSum.lean:163:45: This simp argument is unused:
+  Matrix.smul_apply
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [Matrix.diagonal, Matrix.add_apply, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
+    Matrix.of_apply, Matrix.cons_val', Matrix.empty_val', Matrix.cons_val_fin_one, Complex.exp_eq_exp_ℂ]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/ExpSum.lean:164:27: This simp argument is unused:
+  Matrix.head_cons
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [Matrix.diagonal, Matrix.add_apply, Matrix.smul_apply, Matrix.cons_val_zero, Matrix.cons_val_one,
+    Matrix.of_apply, Matrix.cons_val', Matrix.empty_val', Matrix.cons_val_fin_one, Complex.exp_eq_exp_ℂ]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/ExpSum.lean:165:31: This simp argument is unused:
+  Complex.exp_eq_exp_ℂ
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [Matrix.diagonal, Matrix.add_apply, Matrix.smul_apply, Matrix.cons_val_zero, Matrix.cons_val_one,
+    Matrix.head_cons, Matrix.of_apply, Matrix.cons_val', Matrix.empty_val', Matrix.cons_val_fin_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/ExpSum.lean:168:16: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+warning: RobustZ/ExpSum.lean:243:63: This simp argument is unused:
+  map_neg
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [map_mul, Complex.conj_I, Complex.conj_ofReal]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+info: RobustZ/ExpSum.lean:345:4: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+⚠ [3636/3709] Replayed RobustZ.Approx
+warning: RobustZ/Approx.lean:55:46: Variable name `hδ` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hδ
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: RobustZ/Approx.lean:62:4: This simp argument is unused:
+  Complex.ofReal_ofNat
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Complex.zero_re, Complex.zero_im, Complex.ofReal_zero, Complex.ofReal_neg, mul_zero, zero_mul,
+    mul_one, one_mul, add_zero, zero_add, sub_zero, zero_sub, neg_zero, neg_mul] at h
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/Approx.lean:62:26: This simp argument is unused:
+  mul_zero
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Complex.zero_re, Complex.zero_im, Complex.ofReal_zero, Complex.ofReal_neg, Complex.ofReal_ofNat,
+    zero_mul, mul_one, one_mul, add_zero, zero_add, sub_zero, zero_sub, neg_zero, neg_mul] at h
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/Approx.lean:62:46: This simp argument is unused:
+  mul_one
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Complex.zero_re, Complex.zero_im, Complex.ofReal_zero, Complex.ofReal_neg, Complex.ofReal_ofNat,
+    mul_zero, zero_mul, one_mul, add_zero, zero_add, sub_zero, zero_sub, neg_zero, neg_mul] at h
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/Approx.lean:62:55: This simp argument is unused:
+  one_mul
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Complex.zero_re, Complex.zero_im, Complex.ofReal_zero, Complex.ofReal_neg, Complex.ofReal_ofNat,
+    mul_zero, zero_mul, mul_one, add_zero, zero_add, sub_zero, zero_sub, neg_zero, neg_mul] at h
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/Approx.lean:62:84: This simp argument is unused:
+  sub_zero
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Complex.zero_re, Complex.zero_im, Complex.ofReal_zero, Complex.ofReal_neg, Complex.ofReal_ofNat,
+    mul_zero, zero_mul, mul_one, one_mul, add_zero, zero_add, zero_sub, neg_zero, neg_mul] at h
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/Approx.lean:63:4: This simp argument is unused:
+  zero_sub
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Complex.zero_re, Complex.zero_im, Complex.ofReal_zero, Complex.ofReal_neg, Complex.ofReal_ofNat,
+    mul_zero, zero_mul, mul_one, one_mul, add_zero, zero_add, sub_zero, neg_zero, neg_mul] at h
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/Approx.lean:63:14: This simp argument is unused:
+  neg_zero
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Complex.zero_re, Complex.zero_im, Complex.ofReal_zero, Complex.ofReal_neg, Complex.ofReal_ofNat,
+    mul_zero, zero_mul, mul_one, one_mul, add_zero, zero_add, sub_zero, zero_sub, neg_mul] at h
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/Approx.lean:97:25: This simp argument is unused:
+  Complex.mul_I_re
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Complex.mul_re, Complex.mul_im, Complex.add_re, Complex.add_im, Complex.ofReal_re,
+    Complex.ofReal_im, Complex.mul_I_im, Complex.I_re, Complex.I_im, Complex.neg_re, Complex.neg_im, mul_zero, zero_mul,
+    add_zero, sub_zero, neg_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/Approx.lean:97:43: This simp argument is unused:
+  Complex.mul_I_im
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Complex.mul_re, Complex.mul_im, Complex.add_re, Complex.add_im, Complex.ofReal_re,
+    Complex.ofReal_im, Complex.mul_I_re, Complex.I_re, Complex.I_im, Complex.neg_re, Complex.neg_im, mul_zero, zero_mul,
+    add_zero, sub_zero, neg_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/Approx.lean:104:79: This simp argument is unused:
+  Complex.add_re
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Complex.mul_re, Complex.mul_im, Complex.sub_re, Complex.sub_im, Complex.add_im, Complex.ofReal_re,
+    Complex.ofReal_im, Complex.mul_I_re, Complex.mul_I_im, Complex.I_re, Complex.I_im, Complex.cos_ofReal_re,
+    Complex.cos_ofReal_im, Complex.sin_ofReal_re, Complex.sin_ofReal_im, Complex.cosh_ofReal_re, Complex.cosh_ofReal_im,
+    Complex.sinh_ofReal_re, Complex.sinh_ofReal_im, Complex.ofReal_neg, Complex.cosh_neg, Complex.sinh_neg,
+    Complex.neg_re, Complex.neg_im, mul_zero, zero_mul, add_zero, sub_zero, neg_zero, mul_one, one_mul]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/Approx.lean:105:6: This simp argument is unused:
+  Complex.add_im
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Complex.mul_re, Complex.mul_im, Complex.sub_re, Complex.sub_im, Complex.add_re, Complex.ofReal_re,
+    Complex.ofReal_im, Complex.mul_I_re, Complex.mul_I_im, Complex.I_re, Complex.I_im, Complex.cos_ofReal_re,
+    Complex.cos_ofReal_im, Complex.sin_ofReal_re, Complex.sin_ofReal_im, Complex.cosh_ofReal_re, Complex.cosh_ofReal_im,
+    Complex.sinh_ofReal_re, Complex.sinh_ofReal_im, Complex.ofReal_neg, Complex.cosh_neg, Complex.sinh_neg,
+    Complex.neg_re, Complex.neg_im, mul_zero, zero_mul, add_zero, sub_zero, neg_zero, mul_one, one_mul]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/Approx.lean:105:60: This simp argument is unused:
+  Complex.mul_I_re
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Complex.mul_re, Complex.mul_im, Complex.sub_re, Complex.sub_im, Complex.add_re, Complex.add_im,
+    Complex.ofReal_re, Complex.ofReal_im, Complex.mul_I_im, Complex.I_re, Complex.I_im, Complex.cos_ofReal_re,
+    Complex.cos_ofReal_im, Complex.sin_ofReal_re, Complex.sin_ofReal_im, Complex.cosh_ofReal_re, Complex.cosh_ofReal_im,
+    Complex.sinh_ofReal_re, Complex.sinh_ofReal_im, Complex.ofReal_neg, Complex.cosh_neg, Complex.sinh_neg,
+    Complex.neg_re, Complex.neg_im, mul_zero, zero_mul, add_zero, sub_zero, neg_zero, mul_one, one_mul]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/Approx.lean:105:78: This simp argument is unused:
+  Complex.mul_I_im
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Complex.mul_re, Complex.mul_im, Complex.sub_re, Complex.sub_im, Complex.add_re, Complex.add_im,
+    Complex.ofReal_re, Complex.ofReal_im, Complex.mul_I_re, Complex.I_re, Complex.I_im, Complex.cos_ofReal_re,
+    Complex.cos_ofReal_im, Complex.sin_ofReal_re, Complex.sin_ofReal_im, Complex.cosh_ofReal_re, Complex.cosh_ofReal_im,
+    Complex.sinh_ofReal_re, Complex.sinh_ofReal_im, Complex.ofReal_neg, Complex.cosh_neg, Complex.sinh_neg,
+    Complex.neg_re, Complex.neg_im, mul_zero, zero_mul, add_zero, sub_zero, neg_zero, mul_one, one_mul]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/Approx.lean:110:25: This simp argument is unused:
+  one_mul
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Complex.mul_re, Complex.mul_im, Complex.sub_re, Complex.sub_im, Complex.add_re, Complex.add_im,
+    Complex.ofReal_re, Complex.ofReal_im, Complex.mul_I_re, Complex.mul_I_im, Complex.I_re, Complex.I_im,
+    Complex.cos_ofReal_re, Complex.cos_ofReal_im, Complex.sin_ofReal_re, Complex.sin_ofReal_im, Complex.cosh_ofReal_re,
+    Complex.cosh_ofReal_im, Complex.sinh_ofReal_re, Complex.sinh_ofReal_im, Complex.ofReal_neg, Complex.cosh_neg,
+    Complex.sinh_neg, Complex.neg_re, Complex.neg_im, mul_zero, zero_mul, add_zero, sub_zero, neg_zero, mul_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/Approx.lean:99:4: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+warning: RobustZ/Approx.lean:111:4: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+warning: RobustZ/Approx.lean:119:71: Variable name `hn` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hn
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: RobustZ/Approx.lean:183:8: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: RobustZ/Approx.lean:226:63: This simp argument is unused:
+  zero_sub
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Complex.mul_re, Complex.mul_im, Complex.neg_re, Complex.neg_im, Complex.I_re, Complex.I_im,
+    Complex.ofReal_re, Complex.ofReal_im, Complex.cos_ofReal_re, Complex.cos_ofReal_im, mul_zero, zero_mul, sub_zero,
+    neg_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/Approx.lean:280:6: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+warning: RobustZ/Approx.lean:293:10: This simp argument is unused:
+  Real.cos_zero
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [Real.cos_two_pi]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/Approx.lean:293:25: This simp argument is unused:
+  Real.cos_two_pi
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [Real.cos_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+info: RobustZ/Approx.lean:476:4: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+warning: RobustZ/Approx.lean:475:4: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+warning: RobustZ/Approx.lean:567:50: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+⚠ [3644/3709] Replayed RobustZ.M5Bridge
+warning: RobustZ/M5Bridge.lean:21:33: Variable name `hτ` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hτ
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [3659/3709] Replayed RobustZ.Smearing
+warning: RobustZ/Smearing.lean:103:28: This simp argument is unused:
+  Complex.mul_im
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [Complex.mul_re]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/Smearing.lean:125:41: This simp argument is unused:
+  Complex.neg_im
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,
+    Complex.neg_re, mul_zero, zero_mul, sub_zero, add_zero, neg_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [3695/3709] Replayed RobustZ.SmearingMain
+warning: RobustZ/SmearingMain.lean:83:15: Variable name `hB` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hB
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: RobustZ/SmearingMain.lean:121:5: Variable name `hPε` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hPε
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [3702/3709] Replayed RobustZ.KernelDecay
+warning: RobustZ/KernelDecay.lean:148:14: This simp argument is unused:
+  one_mul
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Complex.zero_re, Complex.zero_im, Complex.ofReal_zero, Complex.ofReal_neg, zero_mul, zero_add,
+    add_zero] at h
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: RobustZ/KernelDecay.lean:245:8: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+info: RobustZ/KernelDecay.lean:250:2: Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+warning: RobustZ/KernelDecay.lean:373:6: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: RobustZ/KernelDecay.lean:422:50: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+⚠ [3703/3709] Replayed RobustZ.M5Scaled
+warning: RobustZ/M5Scaled.lean:66:2: Try this: 
+  letI̵
+
+The goal is a proposition, so `let` is preferred over `letI`.
+The difference between `let` and `letI` is that `letI` inlines the value.
+But this is not relevant for proofs because of proof irrelevance.
+
+Note: This linter can be disabled with `set_option linter.style.haveILetI false`
+warning: RobustZ/M5Scaled.lean:865:39: Variable name `hτ` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hτ
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: RobustZ/M5Scaled.lean:886:40: Variable name `hτ` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hτ
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: RobustZ/M5Scaled.lean:1613:41: Variable name `hφ0` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hφ0
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: RobustZ/M5Scaled.lean:1613:55: Variable name `hφπ` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hφπ
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: RobustZ/M5Scaled.lean:1638:4: Unused tactic linter: `push_cast` does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+⚠ [3706/3709] Replayed RobustZ.CollarTail
+warning: RobustZ/CollarTail.lean:280:81: Variable name `hw` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hw
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: RobustZ/CollarTail.lean:281:5: Variable name `hwδ` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hwδ
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: RobustZ/CollarTail.lean:632:20: Variable name `hc` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _hc
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+Build completed successfully (3709 jobs).
