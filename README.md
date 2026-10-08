@@ -3,7 +3,8 @@
 Lean 4 + Mathlib formalisation of
 
 > *Explicit Finite-Order Lower Bounds for High-Order Robust Composite `Z` Rotations*
-> — the paper is in [`paper/main.pdf`](paper/main.pdf).
+> — the paper is in [`paper/main.pdf`](paper/main.pdf) (APS/REVTeX submission format);
+> the single-spaced build for reading and for arXiv is [`paper/main_arxiv.pdf`](paper/main_arxiv.pdf).
 
 The development proves, with every constant explicit, that the total `Z`-evolution angle `T` of an
 order-`N` robust composite `Z` rotation grows at least linearly in `N`, with two complementary

@@ -1,5 +1,33 @@
 # Independent verification record
 
+## The current development — three trees
+
+The results quoted in the paper's Table IV live in `lean_sharp/{wC,wF,wM}`. Each tree carries its
+own `lakefile.toml`, `lake-manifest.json` and `lean-toolchain`, so it builds on its own with
+
+```sh
+cd lean_sharp/wC && lake exe cache get && lake build     # likewise wF, wM
+```
+
+| tree | contents | modules | audit files |
+|---|---|---|---|
+| `wC` | model and carrier flatness, elementary rung, exact-criterion rung with its closed forms, the finite-`N` certificates, the coefficient-`4` closed form, the `liminf` theorems | 54 | 8 (`RobustZ/Audit*.lean`) |
+| `wF` | Jensen rung (`2π/e`) and the complexification bridge | 35 | 3 |
+| `wM` | weak-constant `8/e` variant | 47 | 4 |
+
+* A comment-stripped scan of every `.lean` file in the three trees finds **no** `sorry`, `admit`
+  or `axiom`; the only matches are inside comments.
+* The `Audit*.lean` files print the axioms of the headline declarations with `#print axioms`;
+  running them reproduces the list `[propext, Classical.choice, Quot.sound]` recorded in the
+  paper's Sec. VIII C.
+* Each tree ships the `build_*.log` of a successful build of that tree.
+
+Everything below records the **superseded first revision** (a single tree at the repository root,
+45 modules, tagged `v1.0.0`), which proves the elementary bound together with the older
+threshold-profile mechanism.
+
+---
+
 Two things are recorded here.
 
 * **The extended development shipped in the current revision** — explicit finite-order lower
