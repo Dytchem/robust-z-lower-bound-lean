@@ -1,34 +1,38 @@
 % !TEX program = pdflatex
-\documentclass[11pt,a4paper]{article}
+% =====================================================================
+%  Explicit finite-order lower bounds for high-order robust composite
+%  Z rotations.
+%  APS/REVTeX 4.2 manuscript, single-column submission format.
+%  Build:  pdflatex main ; bibtex main ; pdflatex main ; pdflatex main
+% =====================================================================
+\documentclass[%
+  aps,
+  pra,
+  preprint,
+  superscriptaddress,
+  amsmath,amssymb,
+  nofootinbib,
+  floatfix,
+]{revtex4-2}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
-\usepackage[a4paper,left=27mm,right=27mm,top=27mm,bottom=27mm]{geometry}
-\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
-\usepackage{microtype}
-\usepackage{array}
+\usepackage{graphicx}
+\usepackage{bm}
 \usepackage{booktabs}
 \usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{amsthm}
 \usepackage[hidelinks,breaklinks]{hyperref}
-\hypersetup{
-  pdftitle={Explicit Finite-Order Lower Bounds for High-Order Robust Composite Z Rotations},
-  pdfauthor={Dytchem},
-  pdfkeywords={robust quantum control; composite pulses; systematic error; linear lower bound; Fourier approximation; formal verification; Lean}
-}
-\usepackage{cleveref}
-
-\allowdisplaybreaks
-\setlength{\parindent}{2em}
-\setlength{\parskip}{0.35em}
-\setlength{\emergencystretch}{2em}
 
 \pdfstringdefDisableCommands{%
   \def\lambda{lambda}\def\tau{tau}\def\phi{phi}\def\alpha{alpha}%
-  \def\eps{epsilon}\def\C{C}\def\R{R}%
+  \def\eps{epsilon}\def\C{C}\def\R{R}\def\lean#1{#1}\def\mathrm#1{#1}%
 }
 
-\newtheorem{theorem}{Theorem}[section]
+% ---------------------------------------------------------------- macros
+\newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{corollary}[theorem]{Corollary}
@@ -44,120 +48,207 @@
 \newcommand{\C}{\mathbb C}
 \newcommand{\R}{\mathbb R}
 \newcommand{\eps}{\varepsilon}
-\newcommand{\phiT}{\phi}
 \newcommand{\tauvar}{\tau}
 \newcommand{\cstar}{c_*}
 \newcommand{\supp}{\operatorname{supp}}
 \newcommand{\e}{\mathrm e}
+% Names of Lean declarations and of files of the formal development.
+\DeclareRobustCommand{\lean}[1]{\path{#1}}
+% Ragged-right table cell (\\ stays the row separator, as \arraybackslash would do).
+\newcommand{\raggedcell}{\raggedright\let\\\tabularnewline}
 
-\title{\bfseries Explicit Finite-Order Lower Bounds for\\[2pt]
-High-Order Robust Composite $Z$ Rotations}
-\author{Dytchem\\[2pt]\small Independent researcher\thanks{Corresponding author. Contact via the public development page \url{https://github.com/Dytchem/robust-z-lower-bound-lean}.}}
-\date{October 2026}
+\allowdisplaybreaks
 
 \begin{document}
-\maketitle
+
+\title{Explicit finite-order lower bounds for\\
+high-order robust composite $Z$ rotations}
+
+\author{Dytchem}
+\affiliation{Independent researcher}
+\thanks{Corresponding author: contact through the public project page
+\url{https://github.com/Dytchem/robust-z-lower-bound-lean}.}
+\date{October 2026}
 
 \begin{abstract}
-We study a minimal control problem from robust composite-pulse synthesis: a target
-single-qubit $Z$ rotation must be built from an imperfect $Z$ evolution, whose angle carries a common
-unknown multiplicative error, together with exact, instantaneous, free $X$ rotations. Our
-main results are \emph{explicit} lower bounds, valid at every order $N$, on the total $Z$-evolution
-cost $T$. The first is elementary: for every $0<\phi\le\pi$,
-$T\ge2\,[\,2\,(2N+2)!\,\sin^{2}(\phi/4)\,]^{1/(2N+2)}$,
-a coefficient $4/e\approx1.4715$ in $N$. It uses nothing beyond the factorial and a $q$-th root, and
-it is pointwise stronger than the closed form $4(N+1)/e$; its proof is a doubling of flatness --
-order-$N$ matrix robustness forces the scalar error carrier $h(\lambda)=1-\tfrac12\Ree\Tr(U_1^\dagger
-U_\lambda)$ to vanish to order $q=2N+2$ -- followed by a single Taylor--Lagrange step at the
-endpoint. The second bound refines the coefficient to $4$, at the price of an explicit threshold and
-of one logarithmic correction: for every $a\ge2$ and every order $N\ge N_0(a)$ one has
-$T\ge4(N+1)[1-a(\log q/q)^{2/3}]$, which at $\phi=\pi$ is the coefficient $4$ in the limit, with
-$N_0(2.3)=5010$ as a concrete instance. Taking the larger of the two at each order gives a single
-lower bound valid for every $N\ge1$, and the asymptotic statement
-$\liminf_{N\to\infty}T_{\min}(N,\phi)/N\ge4$ is a corollary. Both results, with all constants
-explicit, are machine-checked in Lean~4 with Mathlib. Numerically, at $\phi=\pi$ a local search over
-free angles yields sequences whose costs grow by about $5.2$ per order for $N\le8$, below the
-equiangular cost $(2N+1)\pi$; these are upper bounds only. We close by spelling out what the bounds
-rule out and where incoherent errors place the useful order.
+We study the unavoidable cost of a high-order robust single-qubit $Z$ rotation in a
+minimal model: the $Z$ evolution is imperfect, its angle carrying a common unknown
+multiplicative error, while exact, instantaneous and free $X$ rotations are available in
+unlimited number and at arbitrary positions. The resource is the total nominal $Z$ angle
+$T$. We prove explicit lower bounds on $T$ that hold at every order $N$ of error
+cancellation, with all constants written out; they form a ladder of four rungs with
+asymptotic coefficients $2/\e$, $4/\e$, $2\pi/\e$ and $4$. The first two rungs follow from a
+single Taylor step, applied first to the propagator and then to the scalar endpoint
+separation whose vanishing order the unitary structure doubles. The third applies Jensen's
+formula to the carrier, an entire function of exponential type whose bandwidth is half the
+cost. The fourth replaces the vanishing derivatives by vanishing moments and approximates
+the carrier's phase on its whole frequency band. That last rung is an exact, checkable
+criterion: whenever an explicit closed-form quantity in the bandwidth falls below
+$\sin^2(\phi/4)$, every order-$N$ sequence satisfies $T>2\tau$. It certifies, with
+machine-checked arithmetic and no approximation-theory input, the bounds
+$T\ge2,2,4,8,10,14,16,18,22,24,28$ at $\phi=\pi$ for $N=2,\dots,12$, and its closed form
+gives the asymptotic coefficient $4$. We also delimit the method: whether any argument
+that uses only the bandwidth and the flatness order can pass $4$ is equivalent to an explicit
+uncertainty-principle-type statement, the remaining gap is the interval $[4,2\pi]$, and
+incoherent errors of a real device place the useful order near $N=2$--$4$. All bounds beyond the first rung are formalized in Lean~4 with Mathlib, as per-sequence
+statements.
 \end{abstract}
 
-\noindent\textbf{Keywords:} robust quantum control; composite pulses; systematic error;
-linear lower bound; Fourier approximation; formal verification; Lean.
+\keywords{robust quantum control; composite pulses; systematic error; linear lower bound;
+Fourier approximation; formal verification; Lean}
+
+\maketitle
 
 \section{Introduction}
+\label{sec:intro}
 
-Composite-pulse methods provide a general way to suppress systematic control errors by replacing a
-single imperfect operation with a structured sequence whose error terms cancel order by order.
-Arbitrarily high-order cancellation was established in early work on composite pulses, and the
-optimal asymptotic scaling of the number of primitive pulses was later characterized for important
+Composite-pulse methods suppress systematic control errors by replacing a single imperfect
+operation with a structured sequence whose error terms cancel order by order. Arbitrarily
+high-order cancellation was established in early work on composite pulses, and the optimal
+asymptotic scaling of the number of primitive pulses was later characterized for important
 pulse-length-error models~\cite{Brown2004,Merrill2014,Low2014}. A separate line of work has
-addressed lower bounds on the physical operation time of robust composite gates, including geometric
-bounds for first-order pulse-length-error robustness~\cite{Kukita2023} and, more recently, time
+addressed lower bounds on the physical operation time of robust composite gates, including
+geometric bounds for first-order pulse-length-error robustness~\cite{Kukita2023} and time
 lower bounds for first-order robustness under bounded control amplitude~\cite{Zeng2025,Kosut2025}.
-Order-$N$ cancellation is the vanishing of the first $N$ error moments, the condition that also
-underlies optimized dynamical decoupling and the filter-function description of open-loop control~\cite{Kabytayev2014,Uhrig2007,PazSilva2014}, where rigorous design bounds of a different
-type are available~\cite{UhrigLidar2010,Khodjasteh2011,NgLidarPreskill2011}; Section~\ref{sec:related} returns to this comparison.
+Order-$N$ cancellation is the vanishing of the first $N$ error moments, the condition that
+also underlies optimized dynamical decoupling and the filter-function description of
+open-loop control~\cite{Kabytayev2014,Uhrig2007,PazSilva2014}, where rigorous design bounds
+of a different type are available~\cite{UhrigLidar2010,Khodjasteh2011,NgLidarPreskill2011}.
+Section~\ref{sec:related} compares these formulations with the one used here.
 
-The resource model considered here is deliberately different from these standard formulations.
-Suppose that one available interaction generates a $Z$ rotation but its strength is not known
-exactly. A second control can rotate the system about an orthogonal $X$ axis with sufficiently high
-precision that, in the idealized limit, its duration may be regarded as negligible. The natural
-question is then not how many control pulses are needed, but how much of the imperfect interaction
-must unavoidably be accumulated in order to cancel the common systematic error to a specified
-order. This distinction matters: a lower bound on the number of primitive rotations does not
-immediately give a lower bound on a time resource when some rotations are assigned zero cost.
+The resource model considered here is deliberately different. Suppose that one available
+interaction generates a $Z$ rotation but its strength is not known exactly, and that a second
+control can rotate the system about an orthogonal $X$ axis with sufficiently high precision
+that, in the idealized limit, its duration may be regarded as negligible. The natural
+question is then not how many control pulses are needed, but how much of the imperfect
+interaction must unavoidably be accumulated in order to cancel the common systematic error to
+a specified order. The distinction matters: a lower bound on the number of primitive
+rotations does not immediately give a lower bound on a time resource when some rotations are
+assigned zero cost.
 
-The setting also occurs naturally in Rydberg-atom control. In a recent QSP-based proposal~\cite{Ye2026}, the interaction between two Rydberg atoms is treated as an unknown but deterministic phase input, while fast Rydberg transitions are used as interleaved controls; systematic variation of the interaction strength is then suppressed by composite control. Systematic control deviations are, independently of that proposal, among the dominant
-error sources of neutral-atom two-qubit gates~\cite{Evered2023,Mohan2023}. Instead, it isolates a single-qubit mathematical core:
-what is the unavoidable amount of an uncertain $Z$ evolution if exact transverse rotations are free?
+The setting also occurs naturally in Rydberg-atom control. In a recent QSP-based
+proposal~\cite{Ye2026}, the interaction between two Rydberg atoms is treated as an unknown but
+deterministic phase input, while fast Rydberg transitions are used as interleaved controls,
+and systematic variation of the interaction strength is suppressed by composite control.
+Systematic control deviations are, independently of that proposal, among the dominant error
+sources of neutral-atom two-qubit gates~\cite{Evered2023,Mohan2023}. The present work isolates
+the single-qubit mathematical core of this setting: what is the unavoidable amount of an
+uncertain $Z$ evolution if exact transverse rotations are free?
 
-The results proved here are explicit, finite-order statements: a lower bound on $T$ that holds at
-every prescribed order $N$, with all constants written out. They come in two layers, and the
-sharper of the two is the main theorem of the paper.
+The results proved here are explicit, finite-order statements: lower bounds on $T$ that hold
+at every prescribed order $N$, with all constants written out. They form a ladder of four
+rungs, in the order $2/\e\to4/\e\to2\pi/\e\to4$, each using strictly more of the structure of
+the problem than the previous one. Differentiating the propagator itself and taking one
+Taylor--Lagrange step at the endpoint gives
+$T\ge2\,[\,2\,(N+1)!\,\sin(\phi/4)\,]^{1/(N+1)}$, a coefficient $2/\e$ in $N$; this rung uses
+nothing but the product rule, and it is kept to show how little is needed for linear growth.
+Doubling the flatness through a scalar carrier turns the same step into
+$T\ge2\,[\,2\,q!\,\sin^{2}(\phi/4)\,]^{1/q}$ with $q=2N+2$, a coefficient
+$4/\e\approx1.4715$ (Theorem~\ref{thm:elementary}). The carrier extends to an entire function
+of exponential type $T/2$, so Jensen's formula converts the same $q$-fold zero at the nominal
+point into $T\ge\pi q/[\e\,(2/s)^{1/q}]$ with $s=2\sin^{2}(\phi/4)$, a coefficient
+$2\pi/\e\approx2.3115$ with no threshold and no approximation theory
+(Theorem~\ref{thm:jensen}). Finally, the vanishing derivatives become $q$ vanishing moments,
+into which any polynomial of degree $q-1$ may be inserted; approximating $\e^{-\mathrm{i}\mu}$
+on the whole band and smoothing with a compactly supported Fourier multiplier makes the
+endpoint value exponentially small whenever an explicit closed-form criterion in the bandwidth
+is met, which contradicts the order-one separation of the endpoint and yields a checkable
+certificate $T>2\tau$ at every order (Theorem~\ref{thm:newrung}), together with a
+Lean-certified finite-$N$ table and a closed form whose coefficient approaches $4$. The four
+bounds combine into a single bound valid at every order (Corollary~\ref{cor:allN}), from which
+$\liminf_{N\to\infty}T_{\min}(N,\phi)/N\ge4$ follows.
 
-First, an \emph{elementary} bound
-(Theorem~\ref{thm:elementary}): order-$N$ matrix robustness forces the carrier
-$h(\lambda)=1-\tfrac12\Ree\Tr(U_1^\dagger U_\lambda)$ to vanish to order $q=2N+2$ at
-$\lambda=1$, and $h$ has bounded derivatives; one Taylor--Lagrange step at the endpoint
-$\lambda=0$, where the propagator degenerates to a pure $X$ rotation, then gives
-$T\ge2[2\,q!\,\sin^2(\phi/4)]^{1/q}$. The coefficient of $N$ is $4/e\approx1.4715$ as
-$N\to\infty$, and the bound is strictly stronger than the closed form $4(N+1)/e$ at every order.
-Second, a \emph{sharpened} bound (Theorem~\ref{thm:main}): the entire frequency band of the
-carrier is used, not just one Taylor remainder point. The vanishing derivatives become $q$
-vanishing moments, into which any polynomial of degree $q-1$ may be inserted; approximating
-$e^{-i\mu}$ on the whole band and smoothing with a compactly supported Fourier multiplier makes
-$h(0)$ exponentially small whenever $\tau\le\rho q$ with $\rho<1$, contradicting the
-order-one separation of the endpoint. Carrying the constants through this argument yields the
-explicit statement $T\ge4(N+1)[1-a(\log q/q)^{2/3}]$ for every $a\ge2$ and every
-$N\ge N_0(a)$, i.e.\ a coefficient approaching $4$. The two layers combine into a single bound
-valid at every order (Corollary~\ref{cor:allN}), and the asymptotic coefficient
-$\liminf_{N\to\infty}T_{\min}(N,\phi)/N\ge4$ is then immediate.
+The control model, admissibility, the achievable costs, the carrier, and the three rungs beyond
+the first are contained in public Lean~4 + Mathlib developments~\cite{LeanRepo}; the paper
+follows those developments closely, and Sec.~\ref{sec:formal} lists what is machine-checked,
+statement by statement.
 
-The control model, admissibility, achievable
-costs and the carrier, together with both main theorems -- the elementary bound and the
-sharpened bound with its explicit threshold -- are contained in a public Lean~4 + Mathlib
-development~\cite{LeanRepo}. The paper follows the Lean development closely; Section~\ref{sec:formal} lists what is machine-checked.
+The paper is organized as follows. Section~\ref{sec:related} reviews the relation to previous
+work. Section~\ref{sec:model} states the model and all four bounds up front, with no proofs.
+Sections~\ref{sec:elementary}--\ref{sec:newrung} prove the rungs in ladder order, one rung
+family per section, with the shared carrier setup factored once into Sec.~\ref{sec:carrier} and
+cited thereafter. Section~\ref{sec:numerics} reports numerical sequences as upper bounds only,
+with no optimality claim. Section~\ref{sec:formal} tabulates the correspondence with the formal
+development, and Section~\ref{sec:discussion} records what cannot improve the ladder, the open
+ceiling dichotomy at $4$, and the orders that matter for a device. The appendices collect the
+closed forms and the kernel estimate behind the exact criterion, and the conventions of the
+numerical data.
 
-\section{Control model and exact mathematical statement}
+\section{Relation to Previous Work}
+\label{sec:related}
+
+The earliest composite-pulse constructions showed that systematic pulse-length errors can be
+cancelled to arbitrarily high order~\cite{Brown2004}, and Ref.~\cite{Merrill2014} reviews the
+vocabulary of order-$N$ robustness and of cost accounting in that setting. Low, Yoder, and
+Chuang subsequently proved that, in a standard primitive-pulse model, the number of primitive
+rotations required for arbitrary accuracy has optimal linear scaling in the robustness order,
+with constructions saturating that scaling~\cite{Low2014}. Their statement has the same shape
+as Theorem~\ref{thm:newrung}---a linear lower bound in the robustness order together with a
+construction that saturates it---but the resource there is the number of primitive rotations,
+in a model where those rotations are themselves part of the costly control sequence. It
+therefore says nothing about the minimum $Z$-evolution time in the free-$X$ model, which is the
+resource bounded here.
+
+The identification of order-$N$ error cancellation with the vanishing of the first $N$ moments
+of the error is standard in dynamical decoupling and in the filter-function description of
+open-loop control: it is the defining condition of Uhrig's optimized
+sequences~\cite{Uhrig2007}, and it was put on a general footing by the transfer-function
+analysis of Ref.~\cite{PazSilva2014}. The composite-pulse counterpart, a single-qubit sequence
+analyzed order by order in its systematic pulse-length error, is treated
+in Ref.~\cite{Kabytayev2014}. Section~\ref{sec:newrung} uses the same identity, but the carrier
+there is a function of a $Z$-evolution budget rather than of a pulse train, and the constant $4$
+comes from the fact that this carrier is band-limited.
+
+Kukita, Kiya, and Kondo derived a lower bound on the operation time of first-order
+pulse-length-error robust composite gates from a geometric argument~\cite{Kukita2023}. In their
+resource model the rotations that change the control axis cost time; here they are instantaneous
+and free, so a geometric bound on the full control path is not a bound on $T$.
+
+Two recent works bound noise-robust control from the side of the control amplitude. Zeng and
+Deng prove a universal average-case time lower bound for first-order robustness against a
+single quasistatic coherent error under bounded control amplitude, together with a construction
+that is robust in time $4T$ plus a constant~\cite{Zeng2025}; that overhead is fixed and
+$N$-independent, whereas the coefficient studied here is linear in the robustness order. Kosut,
+Lidar, and Rabitz prove a universal lower bound on the fidelity of any robustly controlled gate
+as a function of the gate duration times an aggregate uncertainty~\cite{Kosut2025}. Both
+concern first-order or order-independent robustness, and neither is sharp in the way the rungs
+are for the model of Sec.~\ref{sec:model}: the present proof uses the analytic dependence on a
+common scale parameter $\lambda$ and holds for arbitrary order $N$.
+
+Machine-checked quantum information is by now a developed subject---quantum programs and
+compilers in Coq and Isabelle/HOL~\cite{Bordg2021}, and quantum information theory in
+Lean~\cite{Meiburg2025}---but we are not aware of a formalized lower bound in quantum control.
+The developments behind Theorems~\ref{thm:elementary}, \ref{thm:jensen}
+and~\ref{thm:newrung} attempt one, for a model small enough that the whole proof, analytic
+estimates included, is checked by the kernel.
+
+The connection to the supplied Rydberg QSP manuscript~\cite{Ye2026}---unpublished at the time
+of writing---is complementary. That work treats an unknown interaction phase as the input to a
+QSP-style composite protocol and uses fast control pulses to suppress systematic interaction
+variation. The present result identifies a resource limitation in the idealized single-axis
+core of that philosophy: even with perfect free transverse controls, high-order cancellation
+cannot be made sublinear in the amount of uncertain evolution.
+
+\section{Control model and main results}
 \label{sec:model}
 
 \subsection{Elementary rotations and composite sequences}
 
 Let
 \begin{equation}
-X(\alpha):=\exp\!\left(-i\frac{\alpha}{2}\sigma_x\right),
+X(\alpha):=\exp\!\left(-\mathrm{i}\frac{\alpha}{2}\sigma_x\right),
 \qquad
-Z(\theta):=\exp\!\left(-i\frac{\theta}{2}\sigma_z\right),
+Z(\theta):=\exp\!\left(-\mathrm{i}\frac{\theta}{2}\sigma_z\right),
 \label{eq:rotations}
 \end{equation}
 where $\sigma_x$ and $\sigma_z$ are the Pauli matrices. Throughout, $\lVert\cdot\rVert$ is the
 operator norm on matrices (the largest singular value), which equals one on unitary matrices, and
-all numerics reported in Section~\ref{sec:numerics} use the same norm. The $X$ rotations are assumed exact,
+all numerics reported in Sec.~\ref{sec:numerics} use the same norm. The $X$ rotations are assumed exact,
 instantaneous, and free. The $Z$ evolution is the only costly operation, and in the presence of a
 fixed unknown fractional error $\eps$ its actual propagator is
 \begin{equation}
 Z^{\eps}(\theta)
-=\exp\!\left[-i\frac{(1+\eps)\theta}{2}\sigma_z\right].
+=\exp\!\left[-\mathrm{i}\frac{(1+\eps)\theta}{2}\sigma_z\right].
 \label{eq:imperfectZ}
 \end{equation}
 
@@ -193,7 +284,7 @@ rate $\omega$ simply replaces $T$ by $T/\omega$ in the time interpretation.
 A sequence is \emph{order-$N$ admissible for $\phi$} if
 $\theta_j\ge0$, $U_1=Z(\phi)$, and
 \begin{equation}
-\left.\frac{d^k U_\lambda}{d\lambda^k}\right|_{\lambda=1}=0,
+\left.\frac{\mathrm{d}^k U_\lambda}{\mathrm{d}\lambda^k}\right|_{\lambda=1}=0,
 \qquad k=1,\ldots,N.
 \label{eq:robustness}
 \end{equation}
@@ -209,89 +300,145 @@ T_{\min}(N,\phi):=\inf\mathrm{costs}(N,\phi),
 \label{eq:tmin}
 \end{equation}
 
+\begin{theorem}[First rung, direct Taylor bound, paper-level]
+\label{thm:direct}
+For every $0<\phi\le\pi$ and every order-$N$ admissible sequence,
+\begin{equation}
+\displaystyle
+T\ge
+2\left[2(N+1)!\sin\left(\frac\phi4\right)\right]^{1/(N+1)}.
+\label{eq:2e-finite}
+\end{equation}
+Using Stirling's formula,
+$(N+1)!^{1/(N+1)}=(N+1)\mathrm{e}^{-1}(1+o(1))$, and the fixed factor
+$[2\sin(\phi/4)]^{1/(N+1)}$ tends to one. Hence
+\begin{equation}
+\cstar(\phi)\ge\frac{2}{\mathrm{e}}.
+\label{eq:2e}
+\end{equation}
+This rung is paper-level; it is pointwise weaker than Theorem~\ref{thm:elementary} at every
+order and is omitted from the maximum in Corollary~\ref{cor:allN}.
+\end{theorem}
+
 \begin{theorem}[Elementary bound, valid at every order]
 \label{thm:elementary}
 For every $0<\phi\le\pi$ and every order-$N$ admissible sequence,
 \begin{equation}
-\boxed{\displaystyle
-T\;\ge\;2\,\Bigl[\,2\,(2N+2)!\,\sin^{2}\!\Bigl(\frac{\phi}{4}\Bigr)\Bigr]^{1/(2N+2)} .}
+\displaystyle
+T\;\ge\;2\,\Bigl[\,2\,(2N+2)!\,\sin^{2}\!\Bigl(\frac{\phi}{4}\Bigr)\Bigr]^{1/(2N+2)} .
 \label{eq:thm-elementary}
 \end{equation}
-In particular, at $\phi=\pi$, $T\ge 2\,[(2N+2)!]^{1/(2N+2)}$, which exceeds $4(N+1)/e$ at every
-order; the limiting coefficient of $N$ is $4/e\approx1.4715$. This is the paper's main finite-order
-result: it carries no threshold, no approximation theory, and no transcendental input beyond the
-factorial and a $q$-th root.
+In particular, at $\phi=\pi$, $T\ge 2\,[(2N+2)!]^{1/(2N+2)}$, which exceeds $4(N+1)/\mathrm{e}$ at every
+order; the limiting coefficient of $N$ is $4/\mathrm{e}\approx1.4715$. This bound holds at every order
+with no threshold, no approximation theory, and no transcendental input beyond the
+factorial and a $q$-th root. It is machine-checked as \lean{elementary_bound} (see
+Sec.~\ref{sec:formal}).
 \end{theorem}
 
-\begin{theorem}[Sharpened bound, coefficient $4$]
-\label{thm:main}
-Write $q=2N+2$. For every $a\ge2$ there is an explicit threshold $N_0(a)$ such that every
-order-$N$ admissible sequence with $N\ge N_0(a)$ and target $\phi=\pi$ satisfies
+\begin{theorem}[Jensen bound, valid at every order]
+\label{thm:jensen}
+Write $q=2N+2$ and $s=2\sin^2(\phi/4)$. For every $0<\phi\le\pi$ and every order-$N$
+admissible sequence,
 \begin{equation}
-\boxed{\displaystyle
-T\;\ge\;4\,(N+1)\Bigl[\,1-a\,\Bigl(\frac{\log q}{q}\Bigr)^{2/3}\Bigr] .}
-\label{eq:thm-sharp}
+\displaystyle
+T\;\ge\;\frac{\pi\,q}{\mathrm{e}\,(2/s)^{1/q}} .
+\label{eq:thm-jensen}
 \end{equation}
-Concretely the development states the corollaries with the thresholds $N\ge5010$ (for $a=2.3$) and
-$N\ge46000$ (for $a=2.2$); the exact definition of $N_0(a)$, together with
-the constants that enter it, is recorded in Section~\ref{sec:formal}.
+In particular, at $\phi=\pi$, $T\ge\pi q/(\mathrm{e}\,2^{1/q})$; the limiting coefficient of $N$ is
+$2\pi/\mathrm{e}\approx2.3115$. The bound is explicit at every order, with deficit only
+$(2/s)^{1/q}-1$ vanishing as $q\to\infty$. It is machine-checked as \lean{jensen_rung_final}
+(and \lean{jensen_rung_pi_final} at $\phi=\pi$); the per-$N$ bound divided by $N$ tends to
+$2\pi/\mathrm{e}$ (Lean \lean{jensen_ratio_tendsto}).
+\end{theorem}
+
+\begin{theorem}[Exact-criterion rung, valid at every order]
+\label{thm:newrung}
+Let $N\ge1$, $q=2N+2$, $0<\phi\le\pi$, and $1\le\tauvar<q$. With the explicit closed-form
+quantities $\mathrm{nrCcal}(\tauvar,q)$ and $\mathrm{nrE2star}(\tauvar,q)$ of
+Appendix~\ref{app:technical}, if
+\begin{equation}
+\displaystyle
+\mathrm{nrCcal}(\tauvar,q)\,q^2\,\mathrm{nrE2star}(\tauvar,q)
+\;<\;\sin^2\!\Bigl(\frac{\phi}{4}\Bigr),
+\label{eq:thm-newrung}
+\end{equation}
+then every order-$N$ admissible sequence for the target $\phi$ satisfies
+\begin{equation}
+T\;>\;2\tauvar,
+\qquad\text{hence for all admissible sequences at every }N.
+\label{eq:newrung-conclusion}
+\end{equation}
+The statement is machine-checked as \lean{new_rung_final}: the hypothesis is the strict
+inequality $\tauvar<q$ with $1\le\tauvar$, and the conclusion is the strict bound
+$2\tauvar<\mathrm{cost}\,\theta$. No threshold profile and no $a$-parameter enter: any
+$\tauvar$ passing the check certifies $T>2\tauvar$.
 \end{theorem}
 
 \begin{corollary}[A single bound at every order]
 \label{cor:allN}
-Fix $a\ge2$ and let $N_0(a)$ be as in Theorem~\ref{thm:main}. For every $N\ge1$, every
-order-$N$ admissible sequence with $\phi=\pi$ satisfies
+For every $N\ge1$ and every $0<\phi\le\pi$, every order-$N$ admissible sequence satisfies
 \begin{equation}
-T\;\ge\;\max\Bigl\{\;2\,\bigl[(2N+2)!\bigr]^{1/(2N+2)},\;
-\mathbf 1_{N\ge N_0(a)}\cdot 4\,(N+1)\Bigl[1-a\Bigl(\frac{\log q}{q}\Bigr)^{2/3}\Bigr]\Bigr\}.
+T\;\ge\;\max\Bigl\{\;2\,\bigl[\,2\,q!\,\sin^2(\phi/4)\bigr]^{1/q},\;
+\pi q/(\mathrm{e}(2/s)^{1/q}),\;
+2\,\tauvar^\ast\Bigr\},
 \label{eq:allN}
 \end{equation}
-Consequently $\cstar(\pi)\ge4$; more generally, whenever admissible sequences exist at every order
-and $0<\phi\le\pi$, the same whole-band argument gives $\cstar(\phi)\ge4$.
+where $s=2\sin^2(\phi/4)$ and
+$\tauvar^\ast=\sup\{\tauvar\in[1,q):\mathrm{nrCcal}(\tauvar,q)\,q^2\,
+\mathrm{nrE2star}(\tauvar,q)<\sin^2(\phi/4)\}$.
+Consequently $\cstar(\phi)\ge4$; the Lean developments state the three per-sequence bounds
+in~\eqref{eq:allN} (the paper-level $2/\mathrm{e}$ first rung of Theorem~\ref{thm:direct} is
+pointwise weaker than Theorem~\ref{thm:elementary} and is omitted from the maximum),
+and the passage to $\cstar$ is elementary analysis. All rungs used here cover
+$0<\phi\le\pi$; only the certified finite-$N$ table below is stated at $\phi=\pi$.
 \end{corollary}
 
-\begin{remark}[The role of the parameter $a$]
-\label{rem:a}
-Theorem~\ref{thm:main} is a one-parameter family, and no upper bound on $a$ is needed, because a
-larger $a$ is never better. For fixed $q$ the bracket $1-a(\log q/q)^{2/3}$ decreases in $a$, while
-the threshold $N_0(a)$ grows: it is minimal, about $5\times10^{3}$, near $a\approx2.4$, and it grows
-like $256a^{3}$ beyond. Every instance with $a>2.3$ is therefore dominated by the instance $a=2.3$
--- weaker at every order and available only from a larger $N$ -- so for each $N$ the strongest statement comes from the smallest $a$ available at that $N$, and the quoted pairs $(a,N_0(a))$ are two points on a trade-off curve. For a fixed $a$ the bracket
-tends to $1$ as $q\to\infty$, so the coefficient approaches $4$ for every member of the family; the
-trade-off is a finite-order effect. The family is non-trivial as long as
-$a< (q/\log q)^{2/3}$, which at $q=5010$ allows $a\lesssim70$.
-\end{remark}
-
-The two layers are compared at sample orders in Table~\ref{tab:twolayers}. The sharpened term
-overtakes the elementary one near $N=12$, and their ratio tends to $e$, reflecting the two limiting
-coefficients $4/e$ and $4$. Neither bound is asymptotic in character: each is an explicit
-inequality at the stated order, and~\eqref{eq:allN} combines them into one.
+Table~\ref{tab:twolayers} compares the four rungs at sample orders. The Jensen rung is the
+strongest of them at every tabulated order $N\le12$, and the exact-criterion rung takes over
+asymptotically, where its coefficient $4$ exceeds $2\pi/\mathrm{e}$; the ratio of the two rows
+tends to $\pi/2$. The first three rows evaluate the closed
+forms~\eqref{eq:2e-finite}--\eqref{eq:thm-jensen}, whereas the last row consists of integers
+proved inside Lean (Sec.~\ref{sec:newrung}), not of evaluations.
 
 \begin{table}[t]
 \centering
 \small
-\caption{The two lower bounds of Theorems~\ref{thm:elementary} and~\ref{thm:main}, evaluated at sample orders $N$; the
-sharpened entry is switched off below $N_0(a)=5010$, so the small-$N$ rows are shown only to
-locate the crossover at $N\approx12$.}
+\caption{The four rungs of the ladder---Theorems~\ref{thm:direct}, \ref{thm:elementary},
+\ref{thm:jensen} and~\ref{thm:newrung}---at $\phi=\pi$ and sample orders $N$, with $q=2N+2$.
+Rows: direct, $2\,[(N+1)!\,\sqrt2\,]^{1/(N+1)}$ (paper-level); elementary, $2\,(q!)^{1/q}$
+(\lean{elementary_bound_pi}); Jensen, $\pi q/(\mathrm{e}\,2^{1/q})$
+(\lean{jensen_rung_pi_final}); last row, the integers $2\tauvar$ certified in Lean
+(\lean{cert_N2}--\lean{cert_N4}, \lean{cert_N5_tight}--\lean{cert_N12_tight}). Bold marks the
+strongest proved lower bound at each order.}
 \label{tab:twolayers}
-\begin{tabular}{lrrrrrrr}
+\begin{tabular}{lrrrrrrrr}
 \toprule
-$N$ & $5$ & $10$ & $12$ & $20$ & $100$ & $5010$ & $10^{6}$\\
+$N$ & $2$ & $3$ & $4$ & $5$ & $6$ & $8$ & $10$ & $12$\\
 \midrule
-elementary, $2\,[(2N+2)!]^{1/(2N+2)}$ & $10.58$ & $18.11$ & $21.10$ & $33.02$ & $151.3$ & $7377.8$ & $1.47\cdot10^{6}$\\\\
-sharpened, $a=2.3$ & $4.7$ & $16.6$ & $22.1$ & $45.5$ & $321.9$ & $1.96\cdot10^{4}$ & $4.00\cdot10^{6}$\\\\
-$4(N+1)/e$ & $8.83$ & $16.19$ & $19.13$ & $30.90$ & $148.6$ & $7373.8$ & $1.47\cdot10^{6}$\\\\
+direct (paper-level) & $4.08$ & $4.83$ & $5.58$ & $6.34$ & $7.10$ & $8.62$ & $10.13$ & $11.64$\\
+elementary & $5.99$ & $7.53$ & $9.06$ & $10.58$ & $12.09$ & $15.11$ & $18.11$ & $21.10$\\
+Jensen & $\mathbf{6.18}$ & $\mathbf{8.48}$ & $\mathbf{10.78}$ & $\mathbf{13.09}$ & $\mathbf{15.40}$ & $\mathbf{20.02}$ & $\mathbf{24.64}$ & $\mathbf{29.26}$\\
+exact-criterion cert & $2$ & $2$ & $4$ & $8$ & $10$ & $16$ & $22$ & $28$\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The elementary bound is proved in Section~\ref{sec:elementary}; it is the estimate that holds at
-every order and needs no approximation theory. The sharpened bound is proved in
-Sections~\ref{sec:wholeband}--\ref{sec:mainproof}: it is established for an arbitrary $\rho<1$ by
-contradiction, and the explicit dependence of the constants on $a$ in
-$\rho=1-a(\log q/q)^{2/3}$ is what turns the argument into the finite-order statement~\eqref{eq:thm-sharp}. If some order admits no admissible sequence,~\eqref{eq:tmin} makes its minimum cost $+\infty$; the Lean statement assumes nonemptiness explicitly because Mathlib's \path{sInf} returns $0$ on $\emptyset$ (Section~\ref{sec:formal}).
+\section{The carrier and the first two rungs}
+\label{sec:elementary}
 
-\section{The carrier}
+This section establishes the two cheapest rungs of the ladder and, with them, the fact that
+high-order robustification cannot be sublinear in the order. Both rungs need only one scalar
+object, the carrier $h(\lambda)=1-\tfrac12\Ree\Tr(U_1^\dagger U_\lambda)$ of
+Sec.~\ref{sec:carrier}: order-$N$ matrix flatness at the nominal point makes $h$ flat there to
+order $q=2N+2$, while the derivatives of $h$ are bounded by powers of the bandwidth
+$\tauvar=T/2$. One Taylor step at the endpoint $\lambda=0$, where the costly evolution is
+switched off, then gives the paper-level bound
+$T\ge2\,[\,2\,(N+1)!\,\sin(\phi/4)\,]^{1/(N+1)}$ (Sec.~\ref{sec:direct}) and, with the
+doubled flatness order, the bound $T\ge2\,[\,2\,q!\,\sin^{2}(\phi/4)\,]^{1/q}$
+(Sec.~\ref{sec:doubled}). Their asymptotic coefficients differ by exactly the factor by which
+the flatness order doubles.
+
+\subsection{Carrier setup (once)}
 \label{sec:carrier}
 
 Set
@@ -303,35 +450,37 @@ Set
 and introduce the carrier
 \begin{equation}
 h(\lambda):=
-1-\frac12\Ree\Tr\!\left(U_1^\dagger U_\lambda\right).
+1-\frac12\Ree\Tr\!(U_1^\dagger U_\lambda).
 \label{eq:h}
 \end{equation}
-This normalization makes $h$ measure endpoint separation, expose the doubled flatness order, and admit a finite-band exponential representation.
+Normalized in this way, $h$ carries everything the two rungs need: it measures the separation
+of the endpoints, its vanishing order at the nominal point is twice the order of the matrix
+flatness, and it is a finite exponential sum of bandwidth $\tauvar$.
 
-\subsection{Finite exponential bandwidth}
+\subsubsection{Finite exponential bandwidth}
 
 Because
 \[
 Z(\lambda\theta)
-=e^{-i\lambda\theta/2}\frac{I+\sigma_z}{2}
- +e^{+i\lambda\theta/2}\frac{I-\sigma_z}{2},
+=\mathrm{e}^{-\mathrm{i}\lambda\theta/2}\frac{I+\sigma_z}{2}
+ +\mathrm{e}^{+\mathrm{i}\lambda\theta/2}\frac{I-\sigma_z}{2},
 \]
 expanding the product in~\eqref{eq:sequence} shows that every matrix element of $U_\lambda$ is a
-finite sum of exponentials $e^{i\mu\lambda}$ with
+finite sum of exponentials $\mathrm{e}^{\mathrm{i}\mu\lambda}$ with
 \begin{equation}
 \mu=\frac12\sum_{j=1}^L s_j\theta_j,
 \qquad s_j\in\{-1,+1\}.
 \end{equation}
 Consequently,
 \begin{equation}
-h(\lambda)=\sum_m \gamma_m e^{i\mu_m\lambda},
+h(\lambda)=\sum_m \gamma_m \mathrm{e}^{\mathrm{i}\mu_m\lambda},
 \qquad |\mu_m|\le\tauvar.
 \label{eq:expsum}
 \end{equation}
-Thus $\tauvar=T/2$ is a genuine frequency-bandwidth bound: no component of $h$ oscillates faster
-than $\tauvar$.
+Thus $T/2$ is the bandwidth of the carrier: no component of $h$ oscillates faster than
+$\tauvar$.
 
-\subsection{Bounds on the carrier}
+\subsubsection{Bounds on the carrier}
 
 The relative propagator $V_\lambda:=U_1^\dagger U_\lambda$ is unitary. Therefore
 $|\Tr V_\lambda/2|\le1$, and hence
@@ -341,16 +490,18 @@ $|\Tr V_\lambda/2|\le1$, and hence
 \end{equation}
 At the nominal point $\lambda=1$, $V_1=I$. Write locally
 \[
-V_\lambda=a(\lambda)I+i\bm b(\lambda)\cdot\bm\sigma,
+V_\lambda=a(\lambda)I+\mathrm{i}\bm b(\lambda)\cdot\bm\sigma,
 \qquad a^2+|\bm b|^2=1,
 \]
 with $a(1)=1$ and $\bm b(1)=0$. Matrix flatness of $U_\lambda$ through order $N$ implies
-flatness of $V_\lambda$ through order $N$, so $\bm b$ has a zero of order at least $N+1$. Since
+flatness of $V_\lambda$ through order $N$, so $\bm b$ has a zero of order at least $N+1$ at
+$\lambda=1$. Since
 \[
 h=1-a=\frac{1-a^2}{1+a}
-=\frac{|\bm b|^2}{1+a}
+=\frac{|\bm b|^2}{1+a},
 \]
-near $\lambda=1$, the zero order doubles.
+and the denominator does not vanish near $\lambda=1$, the vanishing order of $h$ is twice that
+of $\bm b$, hence at least $2N+2$. This doubling is what the second rung exploits.
 
 \begin{proposition}[Carrier flatness]
 \label{prop:flatness}
@@ -365,7 +516,7 @@ In particular, the scalar flatness is a consequence of the matrix flatness and i
 assumption.
 \end{proposition}
 
-\subsection{The endpoint at \texorpdfstring{$\lambda=0$}{lambda=0}}
+\subsubsection{The endpoint at \texorpdfstring{$\lambda=0$}{lambda=0}}
 
 At $\lambda=0$, all $Z$ factors become the identity, and therefore
 \begin{equation}
@@ -375,13 +526,13 @@ U_0=X(A),
 \end{equation}
 The target endpoint is $U_1=Z(\phi)$. A direct $SU(2)$ calculation gives
 \begin{equation}
-\Tr\!\left[Z(\phi)^\dagger X(A)\right]
+\Tr\![Z(\phi)^\dagger X(A)]
 =2\cos\frac\phi2\cos\frac A2.
 \end{equation}
 Hence
 \begin{equation}
-\boxed{\displaystyle
-h(0)=1-\cos\frac\phi2\cos\frac A2.}
+\displaystyle
+h(0)=1-\cos\frac\phi2\cos\frac A2.
 \label{eq:h0exact}
 \end{equation}
 For $0<\phi\le\pi$, $\cos(\phi/2)\ge0$, so
@@ -390,7 +541,8 @@ h(0)\ge1-\cos\frac\phi2
 =2\sin^2\frac\phi4>0.
 \label{eq:h0lower}
 \end{equation}
-The two differ: $h(0)=1-\cos(\phi/2)$ fails in general, because the free $X$ rotations leave the arbitrary factor $\cos(A/2)$.
+The distinction matters: the sharper-looking identity $h(0)=1-\cos(\phi/2)$ is false in
+general, because the free $X$ rotations leave the arbitrary factor $\cos(A/2)$.
 
 There is also a useful geometric interpretation. For $U,V\in SU(2)$,
 \begin{equation}
@@ -404,16 +556,13 @@ h(0)=\frac12\norm{U_1-U_0}^2.
 Thus the lower bound~\eqref{eq:h0lower} says that the target is uniformly separated from the
 set of endpoint propagators obtainable by turning off the costly $Z$ evolution.
 
-\section{Two elementary bounds: \texorpdfstring{$2/e$}{2/e} and \texorpdfstring{$4/e$}{4/e}}
-\label{sec:elementary}
+\subsection{Direct propagator estimate: \texorpdfstring{$2/\mathrm{e}$}{2/e}}
+\label{sec:direct}
 
-The coefficient $4$ of Theorem~\ref{thm:main} comes from the whole-band argument of Section~\ref{sec:wholeband}. Linear growth is much cheaper: the $2/e$ estimate below needs only the product rule, and the $4/e$ estimate of Section 4.2 is Theorem~\ref{thm:elementary}, which is machine-checked (\path{elementary_bound}). The $2/e$ estimate is kept because it shows how little is needed for $\Omega(N)$.
-
-\subsection{Direct propagator estimate: \texorpdfstring{$2/e$}{2/e}}
-
-Differentiating a single $Z$ factor gives
+This is the first rung of the ladder. It is paper-level: one Taylor step
+without doubling. Differentiating a single $Z$ factor gives
 \[
-\norm{\frac{d^m}{d\lambda^m}Z(\lambda\theta_j)}
+\norm{\frac{\mathrm{d}^m}{\mathrm{d}\lambda^m}Z(\lambda\theta_j)}
 =\left(\frac{\theta_j}{2}\right)^m.
 \]
 Applying the product rule to the whole sequence and using the unitarity of all undifferentiated
@@ -438,28 +587,17 @@ On the other hand, $U_0=X(A)$ and $U_1=Z(\phi)$, and the exact endpoint geometry
 \norm{X(A)-Z(\phi)}
 \ge2\sin\frac\phi4.
 \end{equation}
-Therefore every admissible sequence satisfies
-\begin{equation}
-\boxed{\displaystyle
-T\ge
-2\left[2(N+1)!\sin\left(\frac\phi4\right)\right]^{1/(N+1)}.}
-\label{eq:2e-finite}
-\end{equation}
-Using Stirling's formula,
-$(N+1)!^{1/(N+1)}=(N+1)e^{-1}(1+o(1))$, and the fixed factor
-$[2\sin(\phi/4)]^{1/(N+1)}$ tends to one. Hence
-\begin{equation}
-\cstar(\phi)\ge\frac2e.
-\label{eq:2e}
-\end{equation}
+Together these prove Theorem~\ref{thm:direct}, stated in Sec.~\ref{sec:model}.
 
-This is already enough to rule out any sublinear robustification. In particular, the conclusion
-that arbitrarily high-order cancellation must cost at least $\Omega(N)$ does not depend on the
-technical machinery of the main proof.
+This already rules out sublinear robustification: arbitrarily high-order cancellation costs at
+least $\Omega(N)$, and that conclusion needs nothing beyond the product rule and one Taylor
+step. The bound is pointwise weaker than Theorem~\ref{thm:elementary} at every order, so it is
+omitted from the maximum in Corollary~\ref{cor:allN}.
 
-\subsection{Using the doubled flatness: \texorpdfstring{$4/e$}{4/e}}
+\subsection{Using the doubled flatness: \texorpdfstring{$4/\mathrm{e}$}{4/e}}
+\label{sec:doubled}
 
-The improvement is immediate once the carrier is introduced. From~\eqref{eq:Ukbound} and
+The gain comes from the doubled flatness order. From~\eqref{eq:Ukbound} and
 $|\Tr M|\le2\norm M$, one obtains
 \begin{equation}
 |h^{(k)}(\lambda)|\le\tauvar^k.
@@ -473,409 +611,227 @@ $q=2N+2$. Taylor's theorem therefore yields
 \end{equation}
 Combining with~\eqref{eq:h0lower} gives
 \begin{equation}
-\boxed{\displaystyle
+\displaystyle
 T\ge
 2\left[2q!\sin^2\left(\frac\phi4\right)\right]^{1/q},
-\qquad q=2N+2.}
+\qquad q=2N+2.
 \label{eq:4e-finite}
 \end{equation}
-Since $(q!)^{1/q}\sim q/e$, more precisely $(q!)^{1/q}=(q/e)(1+o(1))$,
+Since $(q!)^{1/q}\sim q/\mathrm{e}$, more precisely $(q!)^{1/q}=(q/\mathrm{e})(1+o(1))$,
 \begin{equation}
-\cstar(\phi)\ge\frac4e\approx1.4715.
+\cstar(\phi)\ge\frac{4}{\mathrm{e}}\approx1.4715.
 \label{eq:4e}
 \end{equation}
 
 The factor of two in the asymptotic coefficient comes entirely from the doubled flatness order
-$q=2(N+1)$. No new physical assumption is introduced. The only information not yet exploited is
-that $h$ is a band-limited finite exponential sum. The main theorem obtains a further factor
-$e$ by using that whole band rather than one Taylor remainder point.
+$q=2(N+1)$; no new physical assumption enters. The one piece of information still unused is that
+$h$ is not merely flat and bounded but band-limited. Sec.~\ref{sec:jensen} converts the
+bandwidth into a further factor $\pi/2$, giving the coefficient $2\pi/\mathrm{e}$, and
+Sec.~\ref{sec:newrung} uses the whole band rather than one Taylor remainder point to reach a
+coefficient approaching $4$.
 
-\section{The whole-band argument}
-\label{sec:wholeband}
+\section{The Jensen rung}
+\label{sec:jensen}
+
+The carrier $h$ of~\eqref{eq:h} is a finite exponential sum, hence the restriction to
+$\lambda\in\R$ of an entire function. Let $H$ be its canonical complexification. Only two
+analytic facts about $H$ are needed: a growth bound in the imaginary direction, and Jensen's
+formula on discs. Write $\tauvar=T/2$ and $s=2\sin^2(\phi/4)$, so that $h(0)\ge s>0$
+by~\eqref{eq:h0lower}.
+
+\subsection{Complex growth and zero counting}
+
+Let $H$ be the canonical complexification of $h$. It is entire and satisfies the pointwise
+growth bound
+\begin{equation}
+\|H(z)\|\;\le\;2\,\mathrm{e}^{\tauvar\,|\Im z|},
+\qquad z\in\C,
+\label{eq:jgrow}
+\end{equation}
+since each $X$ factor is unitary and each
+$Z$ factor has norm $\mathrm{e}^{|y|\theta_j/2}$, so submultiplicativity gives the bound with no
+dependence on the number of segments. Averaging $\log|H|$ over the circle $|z|=r$,
+the indicator mean $\frac1{2\pi}\int_0^{2\pi}|\sin\theta|\,\mathrm{d}\theta=2/\pi$ gives
+\begin{equation}
+\bar M(r)
+:=\frac1{2\pi}\int_0^{2\pi}\log|H(re^{\mathrm{i}\theta})|\,\mathrm{d}\theta
+\;\le\;\log2+\frac{2}{\pi}\tauvar r,
+\qquad r\ge0,
+\label{eq:jmean}
+\end{equation}
+This is the non-asymptotic form of the
+Phragm\'en--Lindel\"of indicator bound: growth lives only in $\Im z$, and the circular mean
+sees mostly the real axis where there is almost none.
+
+Jensen's formula on the disc $D(0,r)$ reads
+$\bar M(r)=\log h(0)+N(r)$, where $N(r)$ counts zeros in $|z|\le r$. The flatness of
+Proposition~\ref{prop:flatness} is a $q$-fold complex zero at $\lambda=1$,
+and every such zero with $|1|<r$ contributes $\log(r/1)>0$, so for $r>1$
+\begin{equation}
+N(r)\;\ge\;q\log r.
+\label{eq:jzero}
+\end{equation}
+Dropping unknown zeros only decreases the right-hand side, and using fewer than the $q$
+known zeros is strictly weaker. Zeros on the circle $|z|=r$ are handled by
+perturbation and continuity; the optimizer below is interior, so no boundary case is used.
+
+\subsection{Proof of Theorem~\ref{thm:jensen}}
+
+\begin{proof}
+Combining~\eqref{eq:jmean}--\eqref{eq:jzero} with $h(0)\ge s$ gives, for all $r>1$,
+\begin{equation}
+q\log r\;\le\;\log\frac{2}{s}+\frac{2}{\pi}\tauvar r,
+\qquad\text{i.e.}\qquad
+\tauvar\;\ge\;\frac{\pi}{2}\,\frac{q\log r-\log(2/s)}{r}.
+\label{eq:jcombine}
+\end{equation}
+The right-hand side is optimized in closed form:
+$\sup_{r>1}(q\log r-L)/r=q/(\mathrm{e}\,\mathrm{e}^{L/q})$, attained at the interior point
+$r^\star=\mathrm{e}\,(2/s)^{1/q}>1$. Hence
+$\tauvar\ge(\pi/2)\,q/(\mathrm{e}\,(2/s)^{1/q})$, i.e.
+\begin{equation}
+T=2\tauvar\;\ge\;\frac{\pi\,q}{\mathrm{e}\,(2/s)^{1/q}},
+\end{equation}
+which is~\eqref{eq:thm-jensen}. Since $(2/s)^{1/q}\to1$ and $q/N\to2$,
+$\liminf_{N\to\infty}T/N\ge2\pi/\mathrm{e}$. The full chain is machine-checked as
+\lean{jensen_rung_final}.
+\end{proof}
+
+\begin{remark}[Where the constant comes from, and where this lens caps]
+The gain of $\pi/2$ over the max-modulus (Schwarz) variant -- which gives
+$T\ge2q/(\mathrm{e}(2/s)^{1/q})$, the same $4/\mathrm{e}$ value as the Taylor route but by a genuinely
+different argument -- is exactly the indicator mean $2/\pi$: Jensen averages over the
+circle instead of taking the worst point. Within the disc-Jensen lens actually executed
+(discs at either center, max-modulus, three-circles, known-zero products), the constant
+$2\pi/\mathrm{e}$ is the proved ceiling: the estimate chain has no other tunable quantity, and the
+supremum is attained. Beating $2\pi/\mathrm{e}$ by arbitrary-domain formulas, or reaching $4$ by
+fuller complex analysis, is open; the obstruction is the uncertainty principle of
+Sec.~\ref{sec:discussion}.
+\end{remark}
+
+\section{The exact-criterion rung}
+\label{sec:newrung}
+
+The Jensen rung uses only zero density. The exact-criterion rung uses the whole band: the
+$q$ vanishing derivatives at $\lambda=1$ become $q$ vanishing moments, into which the
+truncated Chebyshev expansion of $\mathrm{e}^{-\mathrm{i}\mu}$ is inserted, and a compactly supported
+Fourier multiplier turns the replacement into a kernel estimate. Every constant below is the
+one that Lean checks, and the definitions are stated in Lean's notation.
 
 \subsection{Vanishing derivatives become vanishing moments}
 
-Let
-\[
-h(\lambda)=\sum_m \gamma_m e^{i\mu_m\lambda},
-\qquad |\mu_m|\le\tauvar.
-\]
-Differentiation gives
-\[
-h^{(k)}(1)=i^k\sum_m \gamma_m\mu_m^k e^{i\mu_m}.
-\]
-Hence Proposition~\ref{prop:flatness} is equivalent to
+With $h(\lambda)=\sum_m\gamma_m \mathrm{e}^{\mathrm{i}\mu_m\lambda}$ and $|\mu_m|\le\tauvar$,
+differentiation gives $h^{(k)}(1)=\mathrm{i}^k\sum_m\gamma_m\mu_m^k \mathrm{e}^{\mathrm{i}\mu_m}$, so
+Proposition~\ref{prop:flatness} is equivalent to the moment constraints (Lean
+\lean{h_moments})
 \begin{equation}
-\boxed{\displaystyle
-\sum_m \gamma_m\mu_m^k e^{i\mu_m}=0,
-\qquad k=0,1,\ldots,q-1.}
+\displaystyle
+\sum_m \gamma_m\mu_m^k \mathrm{e}^{\mathrm{i}\mu_m}=0,
+\qquad k=0,1,\ldots,q-1.
 \label{eq:moments}
 \end{equation}
-These are the moment constraints that drive the approximation argument.
-
-If $P$ is any polynomial of degree strictly smaller than $q$, then the moments imply
+If $P$ is any polynomial of degree $<q$, the moments imply
+$\sum_m\gamma_mP(\mu_m)\mathrm{e}^{\mathrm{i}\mu_m}=0$, and since $h(0)=\sum_m\gamma_m$,
 \begin{equation}
-\sum_m \gamma_mP(\mu_m)e^{i\mu_m}=0.
-\end{equation}
-Since $h(0)=\sum_m \gamma_m$, we can therefore write
-\begin{equation}
-\boxed{\displaystyle
-h(0)=\sum_m \gamma_m\left[1-P(\mu_m)e^{i\mu_m}\right].}
+\displaystyle
+h(0)=\sum_m \gamma_m[1-P(\mu_m)\mathrm{e}^{\mathrm{i}\mu_m}].
 \label{eq:replace}
 \end{equation}
-Moreover,
-\begin{equation}
-\left|1-P(\mu)e^{i\mu}\right|
-=\left|e^{-i\mu}-P(\mu)\right|.
-\label{eq:replacement-error}
-\end{equation}
-Thus the endpoint value can be made small whenever $e^{-i\mu}$ can be approximated on the
-entire band $[-\tauvar,\tauvar]$ by a polynomial of degree $<q$ with sufficiently small error.
+With $\Psi(\mu):=\mathrm{e}^{-\mathrm{i}\mu}-P(\mu)$, the bracket has modulus $|\Psi(\mu)|$. Thus $h(0)$ is
+small whenever $\mathrm{e}^{-\mathrm{i}\mu}$ is uniformly approximable on the band $[-\tauvar,\tauvar]$ by a
+polynomial of degree $<q$. The development takes $P$ to be the Chebyshev truncation of
+the Jacobi--Anger expansion (see, e.g., Ref.~\cite{MasonHandscomb}); no Bessel API is used,
+only the integral definition of the Fourier coefficients.
 
-Identity~\eqref{eq:replace} is a discrete sum, so $P$ must be replaced by a uniformly small approximation; the next subsection builds one by Fourier inversion.
+The explicit closed-form quantities $\mathrm{nrCcal}(\tauvar,q)$ and
+$\mathrm{nrE2star}(\tauvar,q)$ entering~\eqref{eq:thm-newrung}---the contour-shift
+coefficient bound, the collar bookkeeping, and the smoothing-kernel estimate---are stated
+verbatim in Lean's notation in Appendix~\ref{app:technical}
+(\eqref{eq:besseldefs}--\eqref{eq:ccal} and~\eqref{eq:kernelbound}).
 
-\subsection{Smoothing by a compactly supported Fourier multiplier}
+\subsection{Proof of Theorem~\ref{thm:newrung}}
 
-Let $P$ be a degree-$(q-1)$ approximation and define on the band
-\begin{equation}
-\Psi(\mu):=1-P(\mu)e^{i\mu}.
-\end{equation}
-Up to the unimodular factor $e^{-i\mu}$ this is the $\Psi_A$ used in Section~\ref{sec:threshold}, so $|\Psi_A|=|\Psi|$.
-Choose a $C^2$ cutoff $\chi$ satisfying
-\begin{equation}
-\chi(\mu)=1\quad(|\mu|\le\tauvar),
-\qquad
-\chi(\mu)=0\quad(|\mu|\ge\tauvar+B),
-\label{eq:cutoff}
-\end{equation}
-with a fixed absolute cutoff constant $K$ such that
-\begin{equation}
-|\chi'(\mu)|\le\frac{K}{B},
-\qquad
-|\chi''(\mu)|\le\frac{K}{B^2}.
-\label{eq:cutoff-deriv}
-\end{equation}
-Set
-\begin{equation}
-\widehat\kappa(\mu):=\Psi(\mu)\chi(\mu),
-\qquad
-\kappa(t):=\frac1{2\pi}\int_{\R}\widehat\kappa(\mu)e^{-i\mu t}\,d\mu.
-\label{eq:kappa}
-\end{equation}
-Because $\widehat\kappa$ is compactly supported and $C^2$, two integrations by parts give
-\begin{equation}
-|\kappa(t)|
-\le\min\{C_1,C_2/t^2\},
-\label{eq:kappa-min}
-\end{equation}
-where
-\begin{equation}
-C_1:=\frac1{2\pi}\int_\R|\widehat\kappa(\mu)|\,d\mu,
-\qquad
-C_2:=\frac1{2\pi}\int_\R|\widehat\kappa''(\mu)|\,d\mu.
-\label{eq:C12}
-\end{equation}
-Splitting the $t$ integral at $|t|=\sqrt{C_2/C_1}$ yields the elementary estimate
-\begin{equation}
-\Lone{\kappa}\le4\sqrt{C_1C_2}.
-\label{eq:kappaL1}
-\end{equation}
-On the frequency band, $\chi=1$, so~\eqref{eq:expsum} gives
-\begin{align}
-\int_\R h(t)\kappa(t)\,dt
-&=\sum_m \gamma_m\widehat\kappa(\mu_m)\\
-&=\sum_m \gamma_m\left[1-P(\mu_m)e^{i\mu_m}\right]
-=h(0).
-\end{align}
-Together with $\norm h_\infty\le2$, this gives
-\begin{equation}
-\boxed{\displaystyle
-|h(0)|\le8\sqrt{C_1C_2}.}
-\label{eq:h0kernel}
-\end{equation}
-Thus the problem has been reduced to controlling the product $C_1C_2$.
+\begin{proof}
+For an admissible sequence with $T\le2\tauvar$ all frequencies satisfy
+$|\mu_m|\le T/2\le\tauvar$, so by the moment conditions~\eqref{eq:moments},
+$h(0)=\sum_m\gamma_m\Psi(\mu_m)=\int h\,\kappa$ (Lean \lean{nr_main_rung}), whence
+$|h(0)|\le\|h\|_\infty\|\kappa\|_1\le2\,\mathrm{nrCcal}(\tauvar,q)\,q^2\,
+\mathrm{nrE2star}(\tauvar,q)$. With the endpoint bound
+$h(0)\ge2\sin^2(\phi/4)$ of~\eqref{eq:h0lower} this contradicts~\eqref{eq:thm-newrung}.
+The wrapper applying this to the truncation data is machine-checked as
+\lean{new_rung_final}.
+\end{proof}
 
-\subsection{Polynomial approximation on the frequency band}
-\label{subsec:approx}
+\subsection{Certified finite-order instances}
 
-The natural polynomial comes from the Fourier representation of
-$e^{-i\tauvar\cos u}$. Define
-\begin{equation}
-c_n(\tauvar):=
-\frac1{2\pi}\int_0^{2\pi}
- e^{-inu}e^{-i\tauvar\cos u}\,du.
-\label{eq:fouriercoef}
-\end{equation}
-Then
-\begin{equation}
-e^{-i\tauvar\cos u}
-=c_0(\tauvar)+2\sum_{n\ge1}c_n(\tauvar)T_n(\cos u),
-\label{eq:cheb-series}
-\end{equation}
-so, on $|\mu|\le\tauvar$,
-\begin{equation}
-e^{-i\mu}
-=c_0(\tauvar)+2\sum_{n\ge1}c_n(\tauvar)T_n\!\left(\frac\mu{\tauvar}\right).
-\end{equation}
-Equivalently $c_n(\tauvar)=i^{-n}J_n(\tauvar)$, so the degree at which the truncation must stop is
-the Bessel turning point $n\approx\tauvar$; the formal development does not introduce Bessel
-functions and works directly with the Fourier coefficients.
+At $\phi=\pi$ one has $\sin^2(\phi/4)=1/2$ (and $h(0)=1$ for every $A$
+by~\eqref{eq:h0exact}, since $\cos(\pi/2)=0$), and the criterion~\eqref{eq:thm-newrung} is
+verified inside Lean at the following bandwidths by rigorous explicit bounds (rational
+square-root enclosures and Mathlib logarithm bounds; no \lean{sorry} or \lean{axiom}).
+Each row is an integer $2\tauvar$ with $T>2\tauvar$ proved by the named theorem:
 
-For any $\sigma>0$, shift the contour from $u$ to $u-i\sigma$; the integrand is entire and
-$2\pi$-periodic, so the integral is unchanged. Since
-\[
-\cos(u-i\sigma)=\cos u\cosh\sigma+i\sin u\sinh\sigma,
-\]
-the two factors of the shifted integrand obey
-$\lvert e^{-in(u-i\sigma)}\rvert=e^{-n\sigma}$ and
-$\lvert e^{-i\tauvar\cos(u-i\sigma)}\rvert=e^{\tauvar\sin u\sinh\sigma}\le
-e^{\tauvar\sinh\sigma}$, so for $n>0$
-\begin{equation}
-|c_n(\tauvar)|
-\le\exp\!\left(\tauvar\sinh\sigma-n\sigma\right).
-\label{eq:cn-decay}
-\end{equation}
-Truncate the series after degree $q-1$ and denote the resulting polynomial by
-$P_{q-1}$. A geometric tail estimate gives an approximation error bounded by
-\begin{equation}
-\eta
-:=\sup_{|\mu|\le\tauvar}|e^{-i\mu}-P_{q-1}(\mu)|
-\le
-\left(1+\frac4{1-e^{-\sigma}}\right)e^\sigma
-\exp\!\left(\tauvar\sinh\sigma-\sigma q\right).
-\label{eq:eta-general}
-\end{equation}
-The prefactor is chosen to match the formal development.
+\begin{table}[ht]
+\centering
+\small
+\caption{Integers certified in Lean at $\phi=\pi$ by the exact criterion: order $N$, $q=2N+2$,
+the certified bandwidth $\tauvar$ (certificates \lean{cert_N2}--\lean{cert_N4} and
+\lean{cert_N5_tight}--\lean{cert_N12_tight} in column order), and the resulting lower bound
+$T>2\tauvar$.}
+\label{tab:certs}
+{\footnotesize\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrrrrrrrrrr}
+\toprule
+$N$ & $2$ & $3$ & $4$ & $5$ & $6$ & $7$ & $8$ & $9$ & $10$ & $11$ & $12$\\
+\midrule
+$q=2N+2$ & $6$ & $8$ & $10$ & $12$ & $14$ & $16$ & $18$ & $20$ & $22$ & $24$ & $26$\\
+$\tauvar$ & $1$ & $1$ & $2$ & $4$ & $5$ & $7$ & $8$ & $9$ & $11$ & $12$ & $14$\\
+$T>2\tauvar$ & $2$ & $2$ & $4$ & $8$ & $10$ & $14$ & $16$ & $18$ & $22$ & $24$ & $28$\\
+\bottomrule
+\end{tabular}
+}
+\end{table}
 
-Suppose now that
-\begin{equation}
-\tauvar\le\rho q,
-\qquad0<\rho<1.
-\label{eq:belowthreshold}
-\end{equation}
-Choose $\sigma'>0$ so small that
-\begin{equation}
-\eta_0:=\sigma'-\rho\sinh\sigma'>0.
-\label{eq:eta0}
-\end{equation}
-Such a choice exists because $\sinh\sigma'=\sigma'+O((\sigma')^3)$ and $\rho<1$. Then
-\begin{equation}
-\eta
-\le D_0 e^{-\eta_0 q},
-\qquad
-D_0:=\left(1+\frac4{1-e^{-\sigma'}}\right)e^{\sigma'}.
-\label{eq:eta-exp}
-\end{equation}
-The error therefore decays exponentially in the polynomial degree as long as the frequency
-bandwidth stays below the critical ratio $\tauvar/q=1$.
+\subsection{Asymptotic closed form: coefficient $4$}
 
-\subsection{The \texorpdfstring{$\tau$}{tau}-scaled collar}
-\label{subsec:collar}
+The criterion~\eqref{eq:thm-newrung} implies a closed form with honest constants. With
+\begin{equation}
+\mathrm{nrU}(q):=6\Bigl(\frac{\log q}{q}\Bigr)^{2/3},
+\label{eq:nrU}
+\end{equation}
+the development proves (Lean \lean{nr_closed_form}) that for every $N$ above the explicit
+threshold $N\ge500+\lceil\exp((11+|\log s_0|)/1.2)\rceil$, with $0<s_0\le\sin^2(\phi/4)$,
+every order-$N$ admissible sequence satisfies
+\begin{equation}
+\displaystyle
+T\;\ge\;4\,(N+1)\bigl(1-\mathrm{nrU}(q)\bigr),
+\qquad q=2N+2.
+\label{eq:closedform}
+\end{equation}
+At $\phi=\pi$ with $s_0=1/2$ this is $N\ge500+\lceil\exp((11+\log2)/1.2)\rceil$.
+Since $\mathrm{nrU}(q)\to0$, the coefficient of $N$ approaches $4$, and
+$\liminf_{N\to\infty}T_{\min}(N,\phi)/N\ge4$ follows by elementary analysis. This is the
+closed-form face of the same rung: the constant $6$ and the threshold are conservative
+bookkeeping from the explicit majorants, not features of the control problem.
 
-The polynomial approximation is required not only on the band itself. The Fourier cutoff extends
-the multiplier to the collar
-$\tauvar<|\mu|\le\tauvar+B$, so derivatives of $P$ must remain controlled there. A collar width
-that is fixed independently of $\tauvar$ is not uniform when $\tauvar\to0$. The formalized
-solution is to choose the width relative to the band:
-\begin{equation}
-\boxed{\displaystyle
-B:=\frac{\eta\tauvar}{q^2}.}
-\label{eq:Bscaled}
-\end{equation}
-Thus
-\begin{equation}
-\frac{B}{\tauvar}=\frac{\eta}{q^2},
-\end{equation}
-which is independent of the absolute scale of $\tauvar$. Both $B$ and the error $\eta$ are
-dimensionless, since angles are measured in units of the nominal $Z$ rate.
-
-The Chebyshev polynomials satisfy the differential equation
-\begin{equation}
-(1-u^2)T_n''(u)=uT_n'(u)-n^2T_n(u).
-\label{eq:chebODE}
-\end{equation}
-Using this equation together with the usual collar growth bound gives, for
-$|u|\le1+\beta$ with $0\le\beta\le1/2$,
-\begin{equation}
-|T_n''(u)|\le32n^4e^{2n\sqrt\beta}.
-\label{eq:cheb2}
-\end{equation}
-With the choice $\beta=B/\tauvar=\eta/q^2$, and the coefficient decay~\eqref{eq:cn-decay} on
-the tail $n\ge q$ of the Chebyshev series, this controls $P$, $P'$, and $P''$ uniformly on the
-whole collar. Two side conditions enter and both hold for all sufficiently large $q$, because
-$\eta$ decays exponentially in $q$ while $\beta=\eta/q^2$: the collar bound requires
-$\beta\le1/2$, and the collar growth $e^{2n\sqrt\beta}$ must be beaten by the decay, that is
-$\sigma>2\sqrt\beta$.
-
-The powers of $q$ come from the head of the series, $n<q$, where one uses only
-$\lvert c_n(\tauvar)\rvert\le 1$ --- immediate from~\eqref{eq:fouriercoef}, whose integrand has
-modulus one --- and not the exponentially large prefactor of~\eqref{eq:cn-decay}; this is what
-keeps the collar estimates polynomial in $q$ rather than exponential. The product rule applied to
-$\widehat\kappa=\Psi\chi$ then gives bounds for $\widehat\kappa$ and $\widehat\kappa''$: on
-the band $\lvert\widehat\kappa\rvert\le\eta$, and on the collar the cutoff contributes the
-factors $K/B$ and $K/B^2$ of~\eqref{eq:cutoff-deriv}, while both integrals are taken over the
-support, of length at most $2(\tauvar+B)$. Appendix~\ref{app:collar} records this assembly. The
-resulting calculation is technical but elementary; its important feature is the scaling in $q$ and
-$\eta$, not the absolute numerical constant. The formal Lean development proves the product
-estimate
-\begin{equation}
-\boxed{\displaystyle
-C_1C_2
-\le3000(1+K)\,\eta\,q^8,}
-\label{eq:kernelproduct1}
-\end{equation}
-where $K$ is the fixed cutoff constant. Combining with~\eqref{eq:eta-exp} gives
-\begin{equation}
-\boxed{\displaystyle
-C_1C_2
-\le
-3000(1+K)\left(1+\frac4{1-e^{-\sigma'}}\right)e^{\sigma'}
-q^8e^{-\eta_0q}.}
-\label{eq:kernelproduct2}
-\end{equation}
-This is the quantitative heart of the formal proof: all dependence on $\tauvar$ has disappeared
-except for the hypothesis $\tauvar\le\rho q$.
-
-\section{Proof of the main theorem}
-\label{sec:mainproof}
-
-We now assemble the preceding ingredients exactly in the order implemented by the Lean
-formalization.
-
-Fix $0<\rho<1$. Assume, for contradiction, that there are arbitrarily large orders $N$ with an
-admissible sequence satisfying
-\begin{equation}
-\tauvar=\frac{T}{2}\le\rho(2N+2)=\rho q.
-\label{eq:smalltau}
-\end{equation}
-Choose $\sigma'>0$ such that
-$\eta_0=\sigma'-\rho\sinh\sigma'>0$. The polynomial approximation above then satisfies~\eqref{eq:eta-exp}, and the $\tau$-scaled collar estimate gives~\eqref{eq:kernelproduct2}. Hence~\eqref{eq:h0kernel} yields
-\begin{equation}
-|h(0)|
-\le8\sqrt{
-3000(1+K)\left(1+\frac4{1-e^{-\sigma'}}\right)e^{\sigma'}
-q^8e^{-\eta_0q}}
-\xrightarrow[q\to\infty]{}0.
-\label{eq:h0tozero}
-\end{equation}
-In particular, for all sufficiently large $N$,
-\begin{equation}
-h(0)<1-\cos\frac\phi2.
-\label{eq:contradiction1}
-\end{equation}
-But the exact endpoint identity~\eqref{eq:h0exact} implies the opposite inequality
-\begin{equation}
-h(0)\ge1-\cos\frac\phi2,
-\label{eq:contradiction2}
-\end{equation}
-which is a contradiction.
-
-We have therefore proved the key statement
-\begin{equation}
-\boxed{\displaystyle
-\tauvar\le\rho(2N+2)
-\quad\text{is impossible for all sufficiently large }N.}
-\label{eq:keysmallness}
-\end{equation}
-Equivalently, every sufficiently high-order admissible sequence satisfies
-\[
-T>2\rho(2N+2)=4\rho(N+1).
-\]
-Taking the infimum over admissible sequences preserves the lower bound, and letting
-$\rho\uparrow1$ gives
-\[
-\liminf_{N\to\infty}\frac{T_{\min}(N,\phi)}{N}\ge4.
-\]
-This proves the mechanism behind Theorem~\ref{thm:main}; the explicit threshold follows by carrying the constants through the same argument (Section~\ref{sec:formal}).
-
-\subsection{From the mechanism to an explicit threshold}
-\label{sec:threshold}
-
-The argument above is stated for an arbitrary $0<\rho<1$, and the polynomial factor $q^8$ in~\eqref{eq:h0tozero} is what makes the resulting threshold implicit. For the finite-order statement~\eqref{eq:thm-sharp} the same chain is used with sharper constants; only two of them matter.
-
-First, the collar bounds on the band error can be made \emph{linear} in the approximation error
-$\eta$ instead of absolute. Writing $d=2N+1$ for the truncation degree and $\Psi_A=e^{-i\mu}-P(\mu)=e^{-i\mu}\Psi$, so that $|\Psi_A|=|\Psi|$ and only the modulus is used,
-the truncated Chebyshev series satisfies, on the whole collar $|\mu|\le\tauvar+B_\sharp$,
-\begin{equation}
-\sup|\Psi_A'|\;\le\;\frac{c_1d^2}{\tauvar}\,\eta,
-\qquad
-\sup|\Psi_A''|\;\le\;\frac{c_2d^4}{\tauvar^2}\,\eta,
-\label{eq:sharpcollar}
-\end{equation}
-with explicit constants $c_1=7$, $c_2=384$. The exponents $d^{2}$ and $d^{4}$ are the correct scalings here: the tail contributes an $n^{2}$-weighted sum, so no $d$-scaling with a $d$-independent constant can hold. The collar growth $e^{2d\sqrt{B_\sharp/\tauvar}}$ is bounded by an absolute factor. Inserting~\eqref{eq:sharpcollar} into the support-aware bounds
-for $C_1$ and $C_2$ of Section~\ref{sec:wholeband}, with the cutoff scale $B_\sharp=\sqrt\eta$ and $d\le q$ (this sharpened-route width is not the $B=\eta\tauvar/q^2$ of Section~\ref{subsec:collar}),
-gives
-\begin{equation}
-C_1C_2\;\le\;C_\sharp\,q^{\beta}\eta^{2},\qquad \beta\le4 ,
-\label{eq:sharpkernelproduct}
-\end{equation}
-with $C_\sharp$ explicit. Compared with~\eqref{eq:kernelproduct1} the power of $q$ has dropped from
-$8$ to at most $4$, and the error enters quadratically.
-
-Second, the approximation error is exponential. With $\sigma'=\operatorname{arccosh}(1/\rho)$ and
-$\mu(\rho)=\sigma'-\sqrt{1-\rho^{2}}$,
-\begin{equation}
-\eta\;\le\;D_0(\rho)\,e^{-q\mu(\rho)},\qquad
-D_0(\rho)=\Bigl(1+\frac{4}{1-e^{-\sigma'}}\Bigr)e^{\sigma'} .
-\label{eq:epsD0}
-\end{equation}
-The function $D_0(\rho)$ is the same expression as the constant $D_0$ of~\eqref{eq:eta-exp}, evaluated at $\sigma'=\operatorname{arccosh}(1/\rho)$.
-The contradiction of~\eqref{eq:h0kernel} and~\eqref{eq:contradiction2} therefore holds as soon as
-$D_0(\rho)e^{-q\mu(\rho)}$ is smaller than an explicit $q$-dependent threshold, and that is an
-inequality in $q$ alone. For the profile
-\begin{equation}
-\rho(q)=1-a\Bigl(\frac{\log q}{q}\Bigr)^{2/3},\qquad a\ge2 ,
-\label{eq:rhoprofile}
-\end{equation}
-and using $\mu(1-u)\ge\frac{47}{50}u^{3/2}$ for $0<u<1$ and $D_0(\rho)\le13(1-\rho)^{-1/2}$ together
-with the explicit constant $K_0=21.1$ of the smoothing multiplier, the criterion reduces to
-$q\ge N_0(a)$ with $N_0(a)$ explicit; the two instances quoted in Theorem~\ref{thm:main} are
-$N\ge5010$ for $a=2.3$ and $N\ge46000$ for $a=2.2$. Section~\ref{sec:formal} records the definitions, the
-constants, and the machine-checked status of every step.
-
-\begin{remark}[Where the coefficient $4$ comes from]
-The constant is transparent once the proof is compressed to one line:
-\[
-q=2N+2,
-\qquad
-\tauvar=\frac T2,
-\qquad
-\tauvar<q
-\quad\Longrightarrow\quad
-h(0)\longrightarrow0.
-\]
-The largest bandwidth ratio for which the approximation argument gives exponential suppression is
-therefore $\tauvar/q<1$. Restoring $T=2\tauvar$ and $q\sim2N$ gives
-$T/N\ge2\times2=4$.
-The number $4$ is thus the threshold delivered by this proof mechanism. The theorem does not
-claim that the optimal control problem itself has asymptotic coefficient exactly $4$.
+\begin{remark}[History: the threshold-$4$ mechanism and the $8/\mathrm{e}$ variant]
+An earlier mechanism proved the same coefficient $4$ through a one-parameter threshold
+profile $\rho_a(q)=1-a(\log q/q)^{2/3}$ with $a\ge2$ (instances $N\ge5010$ at $a=2.3$ and
+$N\ge46000$ at $a=2.2$). It is superseded by Theorem~\ref{thm:newrung}, which certifies
+each bandwidth directly with no $a$-parameter and no threshold profile. A weak-constant
+variant valid at every order with no threshold,
+$T\ge4\,(q!\,\sin^4(\phi/4)/(10^8\,q^4))^{1/q}$ (Lean \lean{eight_over_e_bound} with
+$C=10^8$), has limiting coefficient $8/\mathrm{e}$; it is likewise dominated by the ladder above.
+Both are kept here for the record only, and neither is used in any proof.
 \end{remark}
-
-\section{Target angle and scope}
-\label{sec:angle}
-
-Both bounds are stated for $0<\phi\le\pi$; the sharpened layer is stated at $\phi=\pi$, where the endpoint separation is largest. The endpoint lower bound~\eqref{eq:h0lower} is the only
-place where the target angle enters the proof, and it is strictly positive throughout this interval.
-
-At $\phi=\pi$ the endpoint separation is maximal:
-\begin{equation}
-h(0)=1
-\qquad\text{for every }A,
-\label{eq:pi}
-\end{equation}
-because $\cos(\pi/2)=0$. Thus $Z(\pi)$ is the target that is furthest, in the relevant endpoint
-metric, from the set of pure $X$ rotations.
-
-At the other trivial endpoint, $\phi=0$, the target is $I$ and the empty sequence already realizes
-it exactly. Likewise $Z(2\pi)=-I$ differs only by a global phase and can be generated by the free
-rotation $X(2\pi)=-I$. Hence no positive lower bound can extend to the endpoints where the target
-becomes trivial up to global phase.
 
 \section{Numerical upper bounds for the hardest target}
 \label{sec:numerics}
 
 Corollary~\ref{cor:allN} gives $\cstar(\phi)\ge4$ and leaves the upper end of the window open. The
-gap is quantitative and worth measuring, and we take $\phi=\pi$, the target realized in the Rydberg protocol~\cite{Ye2026}, where each segment of free evolution is designed to
+gap is quantitative and worth measuring, and we take $\phi=\pi$, where the endpoint
+separation is largest. (At the trivial endpoints no positive bound can hold: $\phi=0$ is realized
+by the empty sequence, and $Z(2\pi)=-I$ by the free rotation $X(2\pi)$.) This is also
+the target realized in the Rydberg protocol~\cite{Ye2026}, where each segment of free evolution is designed to
 accumulate the phase $\pi$.
 
 Every number here is an upper bound for $T_{\min}(N,\pi)$; the status of the data is summarized at the end of the section.
@@ -893,72 +849,63 @@ T_{\min}(N,\pi)\;\le\;\min\Big\{\sum_{j=1}^L\theta_j\Big\} ,
 \qquad
 U_1=Z(\pi),
 \qquad
-\frac{d^kU_\lambda}{d\lambda^k}\Big|_{\lambda=1}=0,\quad k\le N .
+\frac{\mathrm{d}^kU_\lambda}{\mathrm{d}\lambda^k}\Big|_{\lambda=1}=0,\quad k\le N .
 \label{eq:numproblem}
 \end{equation}
 Every admissible angle list satisfies Definition~\ref{def:admissible}, so its cost bounds $T_{\min}(N,\pi)$ from above (not $\cstar(\pi)$, which no single order can bound). The angles $\alpha_j$ are free; fixing them all at $\pi$ is what makes the equiangular family of~\cite{Low2014} cost $T=(2N+1)\pi$.
 
 \paragraph{How the numbers were obtained and checked.}
-The minimizations used a truncated-Taylor propagator in the error variable, in which the
-derivative conditions~\eqref{eq:robustness} hold exactly within the truncated model, and a
-time-budget parametrization that turns~\eqref{eq:numproblem} at fixed $T$ into a feasibility problem, pushed down by an adaptive march and
+The minimizations used a truncated-Taylor propagator in the error variable with a
+time-budget parametrization, pushed down by an adaptive march and
 warm-started by continuation in the segment number and in the order. Every solution reported in
 Table~\ref{tab:num} was then re-verified from scratch, with the three conditions kept apart:
 
 \begin{enumerate}[label=(\roman*),leftmargin=2.1em,itemsep=0.15em]
 \item \emph{Nominal identity.} The nominal propagator $U_1$ is rebuilt with an independent
-  \path{scipy.linalg.expm} product, one factor at a time and with no Taylor algebra, and compared
-  with $Z(\pi)$ up to the global sign $-I=X(2\pi)$. That sign is harmless here: a sequence
-  realizing $-Z(\pi)$ realizes $Z(\pi)$ after the free outer rotation $X(2\pi)$, with the same cost
-  and the same derivatives. The mismatch $\lVert U_1\mp Z(\pi)\rVert$ is at most
-  $9\times10^{-10}$ for every order $N\le12$, which is the accuracy to which the angles
-  themselves are determined; it is the tolerance of the search, not the round-off of double
-  precision.
-\item \emph{Flatness.} Write $u_k=d^kU_\lambda/d\lambda^k$ at $\lambda=1$. Since the a priori
-  bound~\eqref{eq:Ukbound} is $\lVert u_k\rVert\le\tauvar^k$, the meaningful residual is the
-  dimensionless ratio $\rho_N:=\max_{1\le k\le N}\lVert u_k\rVert/\tauvar^k$; it is at most
-  $1.5\times10^{-10}$ in every row of Table~\ref{tab:num}. The cancellation is therefore complete
-  to the same ten digits as the nominal identity, whereas for a generic sequence of the same cost
-  the norms would be of order $\tauvar^k$: at $N=12$ the largest one is $1.1\times10^{3}$, against
-  $\tauvar^{12}\approx2\times10^{18}$. The coefficients $[\eps^k]U$ are evaluated twice, by a truncated
-  convolution in double precision and by a matrix series at $50$ significant decimal digits; the two
-  agree on $\rho_N$ to better than $1\%$, the finite precision of the first being the limiting
-  factor, which is why the tabulated values come from the $50$-digit run.
-\item \emph{Order $N$.} The deviation from the target,
+  \lean{scipy.linalg.expm} product with no Taylor algebra, and compared
+  with $Z(\pi)$ up to the harmless global sign $-I=X(2\pi)$, which costs nothing: a sequence
+  realizing $-Z(\pi)$ realizes $Z(\pi)$ after the free outer rotation $X(2\pi)$.
+  The mismatch $\lVert U_1\mp Z(\pi)\rVert$ is at most
+  $9\times10^{-10}$ for every order $N\le12$.
+\item \emph{Flatness.} With $u_k=\mathrm{d}^kU_\lambda/\mathrm{d}\lambda^k$ at $\lambda=1$ and the a priori
+  bound $\lVert u_k\rVert\le\tauvar^k$ of~\eqref{eq:Ukbound}, the dimensionless residual
+  $\rho_N:=\max_{1\le k\le N}\lVert u_k\rVert/\tauvar^k$ is at most
+  $1.5\times10^{-10}$ in every row of Table~\ref{tab:num} (at $N=12$ the largest
+  $\lVert u_k\rVert$ is $1.1\times10^{3}$, against
+  $\tauvar^{12}\approx2\times10^{18}$). The coefficients are evaluated twice, by truncated
+  convolution in double precision and by a matrix series at $50$ significant decimal digits, agreeing
+  on $\rho_N$ to better than $1\%$; the tabulated values come from the $50$-digit run.
+\item \emph{Order $N$.} The deviation
   $\delta(\eps)=\arccos\bigl(\lvert\langle U_{1+\eps},Z(\pi)\rangle\rvert/2\bigr)$ with
-  $\langle U,V\rangle=\Tr(U^\dagger V)$, is evaluated on a grid of errors above the round-off
-  floor. Its local logarithmic slope rises towards $N+1$ as $\eps$ decreases. It then saturates
-  once $\delta$ reaches that floor: the last three slopes are $1.98,1.99,2.00$ at $N=1$,
-  $8.82,8.91,7.99$ at $N=8$, and $12.25,12.51,12.68$ at $N=12$; the final digit of the last entry at
-each order sits at the round-off floor of the computation and is reproduced only to within a few
-units in that digit by a different linear-algebra stack. The third slope entries at $N\ge7$ sit at the round-off floor of the computation; they are platform-dependent and are not result digits. From $N=8$ on the last entries of
-  the column fall short of $N+1$ for that reason, and no order is inferred from them. Where the
+  $\langle U,V\rangle=\Tr(U^\dagger V)$ has local logarithmic slope rising towards $N+1$ as $\eps$
+  decreases, saturating once $\delta$ reaches the round-off floor (e.g.\ the last three slopes are $1.98,1.99,2.00$ at $N=1$).
+  The third slope entries at $N\ge7$ sit at the round-off floor; they are platform-dependent and are not result digits, and no order is inferred from them. Where the
   slope is resolved, the cancellation is carried to order $N$ and stops there.
 \end{enumerate}
 
 \begin{table}[t]\centering\small
-\caption{One admissible sequence per order at $\phi=\pi$, for $N\le12$. Each row is the cost
-$T=\sum_j\theta_j$ of the sequence printed in Appendix~\ref{app:sequences}, which uses $L$
-segments, some of them of zero length, so $T_{\min}(N,\pi)\le T$; no row is claimed to be
-optimal or to be a certified minimum. The
-ratio column compares $T$ with the equiangular cost $(2N+1)\pi$ of~\cite{Low2014}. The last three
-columns are the independent re-verification described in the text: the nominal mismatch, the
-dimensionless flatness residual $\rho_N=\max_{k\le N}\lVert u_k\rVert/\tauvar^k$ of~\eqref{eq:Ukbound} with $\tauvar=T/2$, and the last three local logarithmic slopes of
-$\delta(\eps)$, to be read against $N+1$.}
+\caption{One admissible sequence per order at $\phi=\pi$, for $N\le12$: number $L$ of costly
+segments, cost $T=\sum_j\theta_j$ (so $T_{\min}(N,\pi)\le T$; no row is claimed to be optimal
+or to be a certified minimum), ratio to the equiangular cost $(2N+1)\pi$ of
+Ref.~\cite{Low2014}, and the independent re-verification described in the text---nominal
+mismatch, dimensionless flatness residual
+$\rho_N=\max_{k\le N}\lVert u_k\rVert/\tauvar^k$ of~\eqref{eq:Ukbound} with $\tauvar=T/2$, and
+the last three local logarithmic slopes of $\delta(\eps)$, to be read against $N+1$. The angle
+lists are distributed with the data set of Ref.~\cite{DataRepo}.}
 \label{tab:num}
 \input{num_tables.tex}
 \end{table}
 
 \begin{figure}[t]\centering
-\includegraphics[width=\linewidth]{fignum_num.pdf}
-\caption{The same data as Table~\ref{tab:num}. (a) the cost found by the local search against the equiangular cost
-$(2N+1)\pi$ and the coefficient-$4$ reference line $4N$; the straight line is the fit $T\approx5.26N+2.81$ to the
-branch $N\le8$, whose residuals are below $0.12$. (b) the same cost divided by $N$, against the
-proved lower bound $4$ and the equiangular coefficient $(2N+1)\pi/N$; the dashed line is
-$2\pi\approx6.28$, which the values at $N=1,2$ exceed. (c) the deviation
-$\delta(\eps)$ on a log-log grid for $N=1,3,6,12$, with its local slope; the dashed line has slope
-$2$, the smallest order appearing in the figure, and each curve is drawn only while $\delta$ stays
-above the round-off floor.}
+\includegraphics[width=0.93\linewidth]{fignum_num.pdf}
+\caption{The same data as Table~\ref{tab:num}. (a) Cost found by the local search, against the
+equiangular cost $(2N+1)\pi$ and the coefficient-$4$ line $4N$; the straight line is the fit
+$T\approx5.26N+2.81$ to the branch $N\le8$, whose residuals are below $0.12$. (b) The same cost
+divided by $N$, against the proved lower bound $4$ and $(2N+1)\pi/N$; the dashed line is
+$2\pi\approx6.28$, which the values at $N=1,2$ exceed. (c) The deviation $\delta(\eps)$ on a
+log-log grid for $N=1,3,6,12$, with its local slope; the dashed line has slope $2$, the smallest
+order appearing in the figure, and each curve is drawn only while $\delta$ stays above the
+round-off floor.}
 \label{fig:num}
 \end{figure}
 
@@ -970,20 +917,18 @@ order,
 \[
 T_{\mathrm{num}}(N,\pi)\approx5.26\,N+2.81 ,
 \]
-with increments $5.20,5.20,5.24,5.27,5.19,5.45,5.26$ and residuals below $0.119$. The equiangular
-Every ratio $T/[(2N+1)\pi]$ lies between $0.839$ and $0.926$. The comparison available at these orders is only $T/N<(2+1/N)\pi$: the coefficient $T/N$ is above $2\pi$ at
-$N=1,2$ and stays below it from $N=3$ on, reaching its smallest value $5.62$ at $N=8$. The gain over the equiangular cost may come from the free angles alone: that family fixes
-every free angle at $\pi$ for algebraic convenience, while~\eqref{eq:numproblem} leaves them free,
-and every cost found is below $(2N+1)\pi$. How much of the gain is available in this way is a
-question these numbers do not answer. The table does establish that every listed cost is strictly below $(2N+1)\pi$ and every ratio $T/N$ strictly above the coefficient $4$.
+with increments $5.20,5.20,5.24,5.27,5.19,5.45,5.26$ and residuals below $0.119$. Every ratio
+$T/[(2N+1)\pi]$ lies between $0.839$ and $0.926$, and every ratio $T/N$ stays above the proved
+coefficient $4$: it exceeds $2\pi$ at $N=1,2$ and falls below it from $N=3$ on, reaching its
+smallest value $5.62$ at $N=8$. Part of the gain over the equiangular family may come from the
+free angles alone---that family fixes every $\alpha_j$ at $\pi$ for algebraic
+convenience, whereas~\eqref{eq:numproblem} leaves them free---but how much of it is available in
+this way is a question these numbers do not answer.
 
 \paragraph{Status of the numbers, and what they do not claim.}
-The optimization is a local search: a damped least-squares march from warm starts, with no
-certificate of optimality and no search over segment numbers beyond continuation, and the residuals
-it drives to zero are feasibility conditions, not a minimality condition. What
-Section~\ref{sec:numerics} verifies is \emph{only} that each printed sequence is admissible: it
-realizes $Z(\pi)$ and it cancels the first $N$ derivatives. Every entry of Table~\ref{tab:num} is
-therefore a genuine cost of a genuine sequence, that is, an upper bound for $T_{\min}(N,\pi)$, and
+The optimization is a local search with no certificate of optimality, and what
+Sec.~\ref{sec:numerics} verifies is \emph{only} that each printed sequence is admissible.
+Every entry of Table~\ref{tab:num} is therefore an upper bound for $T_{\min}(N,\pi)$, and
 nothing more. In particular:
 
 \begin{itemize}[leftmargin=1.4em,itemsep=0.15em,topsep=0.25em]
@@ -998,253 +943,119 @@ nothing more. In particular:
   the comparison with the equiangular family is made at equal order $N$ only.
 \end{itemize}
 
-Nothing in this section is used in the proofs of Theorems~\ref{thm:elementary} and~\ref{thm:main}. The one statement the data
-do establish is one-sided and independent of optimality: the equiangular cost $(2N+1)\pi$ is not
-optimal at any order considered, since every listed cost is strictly below it, by a factor between
-$0.839$ and $0.926$. Closing the gap $4\le\cstar(\pi)\le2\pi$ requires either a construction in the free-$X$ model that beats the equiangular family, or a proof that no construction attains $4$.
+None of this section enters the proofs of Theorems~\ref{thm:elementary}, \ref{thm:jensen}
+and~\ref{thm:newrung}. The one statement the data do establish is independent of optimality: the
+equiangular cost $(2N+1)\pi$ is not optimal at any order considered, since every listed cost is
+strictly below it, by a factor between $0.839$ and $0.926$. Closing the gap
+$4\le\cstar(\pi)\le2\pi$ therefore requires either a construction in the free-$X$ model that
+beats the equiangular family, or a proof that no construction attains $4$.
 
-\paragraph{Interactive data.}
-The sequences and their verification can be inspected in a browser at the first resource of Table~\ref{tab:resources}.
+\input{verification.tex}
 
-\section{Code, data, and formal development}
-\label{sec:resources}
+\input{discussion.tex}
 
-Everything used in this paper is public: the proofs are a Lean development, the numerical sequences
-and their independent re-verification are a data set with a browser front end, and the figures and
-tables of Section~\ref{sec:numerics} are regenerated from that data by short scripts.
-Table~\ref{tab:resources} collects the four entry points.
+\begin{acknowledgments}
+The author thanks the Lean~4 and Mathlib communities, whose libraries and tooling made the
+formal verification possible.
+\end{acknowledgments}
 
-\begin{table}[t]\centering\small
-\caption{Public resources for this paper. The Lean development is self-contained: a fresh clone
-reproduces its statements with the three commands of its \texttt{README}. The independent
-re-verification is likewise reproducible from the last entry, and Appendix~\ref{app:sequences}
-carries the same sequences at the precision used there. All addresses were accessed on
-8 October 2026.}
-\label{tab:resources}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.22\linewidth}>{\raggedright\arraybackslash}p{0.68\linewidth}@{}}
-\toprule
-Resource & Content \\
-\midrule
-\url{https://show.dytchem.cn/bloch/} &
-Bloch-sphere animation and the full angle lists of every sequence of
-Table~\ref{tab:num}; browser-side re-computation of the nominal mismatch, the deviation
-$\delta(\eps)$ and its slope, with the equiangular family shown side by side.~\cite{DataRepo} \\
-\url{https://show.dytchem.cn/lean/} &
-Verification status of the formal development: the exact Lean statements of the
-finite-order bounds, the source scan for \path{sorry} and \path{axiom}, and the raw
-\path{lake build} and \texttt{\#print axioms} output for the headline theorems
-(\path{elementary_bound_pi}, \path{endgame_bound_2_3_num},
-\path{all_N_bound_end}, \path{c_ge_four}).~\cite{LeanRepo} \\
-\href{https://github.com/Dytchem/robust-z-lower-bound-lean}{GitHub repository} &
-Lean~4.34.1 with Mathlib~v4.34.1, pinned by \path{lean-toolchain} and
-\path{lake-manifest.json}; \path{VERIFICATION.md} records two from-scratch verifications on
-independent machines for the earlier revision of the development (30 modules, 3709 jobs), and the
-current revision (45 modules, 3739 jobs) was re-checked in the development tree. \path{git clone}, \path{lake exe cache get}, \path{lake build}: 3739
-jobs, with no \path{sorry} or \path{axiom} in the sources.~\cite{LeanRepo} \\
-\href{https://show.dytchem.cn/files/code.zip}{Verification scripts and data} &
-\path{verify_num.py}, which rebuilds every propagator with
-\path{scipy.linalg.expm} and re-evaluates the Taylor coefficients of Section~\ref{sec:numerics}
-at $50$ decimal digits; \path{make_outputs.py}, which regenerates Figures~\ref{fig:num} and~\ref{fig:phys} and
-Appendix~\ref{app:sequences} from the verified data; the data themselves
-(\path{num_results.json}, \path{solutions_largeN.json}); and a \path{README}.~\cite{DataRepo} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The two from-scratch runs recorded for the formal development start from the public clone alone, with
-no files, caches or toolchains copied between machines; they cover the earlier revision of the
-development, and the revision shipped here was re-checked in the development tree, where the full
-build is green and the axiom audit on the main statements reports only \path{propext}, \path{Classical.choice} and \path{Quot.sound}. Appendix~\ref{app:sequences}
-lists the sequences in the convention in which they were verified, rounded to $12$ decimals of
-$\pi$; the rounding is checked, not assumed: feeding those rounded lists back into~\eqref{eq:rotations}--\eqref{eq:robustness} again gives a nominal mismatch below
-$9\times10^{-10}$ and a flatness residual below $1.5\times10^{-10}$, which are the two accuracy
-statements of Table~\ref{tab:num}.
-
-\section{Relation to previous work}
-\label{sec:related}
-
-The earliest composite-pulse constructions showed that systematic pulse-length errors can be
-cancelled to arbitrarily high order~\cite{Brown2004}, and~\cite{Merrill2014} reviews the vocabulary
-of order-$N$ robustness and of cost accounting in that setting. Low, Yoder, and Chuang subsequently
-proved that, in a standard primitive-pulse model, the number of primitive rotations required for
-arbitrary accuracy has optimal linear scaling in the robustness order, with constructions
-saturating that scaling~\cite{Low2014}. Their statement has the same shape as Theorem~\ref{thm:main} --- a linear lower bound in the
-robustness order together with a construction that saturates it --- but the resource is the number
-of primitive rotations, in a model where those rotations are themselves part of the costly control
-sequence. It therefore does not determine the minimum $Z$-evolution time in the free-$X$
-model, which is what Theorem~\ref{thm:main} bounds.
-
-The identification of order-$N$ error cancellation with the vanishing of the first $N$ moments of
-the error is standard in dynamical decoupling and in the filter-function description of open-loop
-control: it is the defining condition of Uhrig's optimized sequences~\cite{Uhrig2007}, and it was
-put on a general footing by the transfer-function analysis of~\cite{PazSilva2014}. The
-composite-pulse counterpart, a single-qubit sequence analyzed order by order in its systematic
-pulse-length error, is analyzed in~\cite{Kabytayev2014}. Section~\ref{sec:wholeband} uses the same identity ---
-vanishing derivatives of the propagator at the nominal point are vanishing moments of the carrier
---- but the carrier here is a function of a $Z$-evolution budget rather than of a pulse train, and
-it is the additional information that this carrier is band-limited, not the identity itself, that
-produces the constant $4$.
-
-Kukita, Kiya, and Kondo derived a lower bound on operation time for first-order pulse-length-error
-robust composite gates using a geometric argument~\cite{Kukita2023}. The resource model there
-assigns time to the rotations that change the control axis. Here those rotations are instantaneous and free, so a geometric bound on the full control path is not a bound on $T$.
-
-Two recent works bound noise-robust control from the side of the control amplitude.
-Zeng and Deng prove a universal average-case time lower bound for first-order robustness against a
-single quasi-static coherent error under bounded control amplitude, together with a construction
-that is robust in time $4T$ plus a constant~\cite{Zeng2025}; that overhead is fixed and
-$N$-independent, whereas the coefficient studied here is linear in the robustness order. Kosut,
-Lidar, and Rabitz prove a universal lower bound on the fidelity of any robustly controlled gate as a
-function of the gate duration times an aggregate uncertainty~\cite{Kosut2025}. Both are statements
-about first-order or order-independent robustness, and neither is sharp in the way
-Theorem~\ref{thm:main} is for the model of Section~\ref{sec:model}: the present proof uses the
-analytic dependence on a common scale parameter $\lambda$ and remains valid for arbitrary order $N$.
-
-Machine-checked quantum information is by now a developed subject --- quantum programs and
-compilers in Coq and Isabelle/HOL~\cite{Bordg2021}, and quantum information theory in Lean~\cite{Meiburg2025} --- but
-we are not aware of a formalized lower bound in quantum control. The development behind
-Theorem~\ref{thm:main} is an attempt in that direction, for a model small enough that the whole
-proof, analytic estimates included, is checked by the kernel.
-
-The connection to the supplied Rydberg QSP manuscript~\cite{Ye2026} --- unpublished at the time of
-writing --- is complementary. That work treats an unknown interaction phase as the input to a
-QSP-style composite protocol and uses fast control pulses to suppress systematic interaction
-variation. The present result identifies a resource
-limitation in the idealized single-axis core of that philosophy: even with perfect free transverse
-controls, high-order cancellation cannot be made sublinear in the amount of uncertain evolution.
-
-\input{lean_section.tex}
-
-\input{discussion_draft.tex}
+\section*{Data availability}
+The Lean~4 formalization~\cite{LeanRepo} and the numerical data set with its verification
+scripts~\cite{DataRepo} are openly available; both were accessed on 8 October 2026. The formal
+development builds from a fresh clone with its pinned toolchain and manifest, and the data set
+contains the angle lists behind Table~\ref{tab:num}, the propagator re-verification, and the
+scripts that regenerate Figs.~\ref{fig:num} and~\ref{fig:phys} and the tables of
+Sec.~\ref{sec:numerics}.
 
 \appendix
 
-\section{The smoothing \texorpdfstring{$L^1$}{L1} estimate}
-\label{app:smoothing}
+\section{Exact-criterion rung: closed forms and kernel estimate}
+\label{app:technical}
 
-The proof of~\eqref{eq:kappaL1} is included because it is the simplest analytic component of the
-formalized whole-band argument. From~\eqref{eq:kappa},
-\[
-|\kappa(t)|\le C_1.
-\]
-Twice integrating by parts gives
-\[
-\kappa(t)=\frac{-1}{2\pi t^2}\int_\R\widehat\kappa''(\mu)e^{-i\mu t}\,d\mu,
-\]
-so $|\kappa(t)|\le C_2/t^2$. Put
-$t_0=\sqrt{C_2/C_1}$ and integrate separately over $|t|\le t_0$ and $|t|>t_0$:
-\[
-\begin{aligned}
-\Lone{\kappa}
-&\le2C_1t_0+2\int_{t_0}^{\infty}\frac{C_2}{t^2}\,dt\\
-&=2\sqrt{C_1C_2}+2\sqrt{C_1C_2}
-=4\sqrt{C_1C_2}.
-\end{aligned}
-\]
-Since $|h(t)|\le2$,
-$|\int h\kappa|\le2\Lone{\kappa}$, which gives~\eqref{eq:h0kernel}.
+This appendix states verbatim, in Lean's notation, the technical lemmas behind
+Theorem~\ref{thm:newrung}: the contour-shift coefficient bound, the collar bookkeeping, and
+the smoothing-kernel estimate. (The fourth technical ingredient, the flatness doubling of
+Proposition~\ref{prop:flatness}, is proved in Sec.~\ref{sec:carrier}.) Nothing here adds a
+claim: every constant below is the one checked by Lean.
 
-\section{Contour-shift estimate for the approximation coefficients}
-\label{app:contour}
+\subsection{The closed-form quantities}
 
-Let
-\[
-f(z)=e^{-i\tauvar\cos z}e^{-inz}.
-\]
-The function is entire and $2\pi$-periodic. By periodicity and Cauchy's theorem, the real-line
-integral defining $c_n$ can be shifted to $z=u-i\sigma$ for $\sigma>0$:
-\[
-c_n=\frac1{2\pi}\int_0^{2\pi}f(u-i\sigma)\,du.
-\]
-The shifted modulus obeys
-\[
-|e^{-in(u-i\sigma)}|=e^{-n\sigma},
-\]
-and, because $\cos(u-i\sigma)=\cos u\cosh\sigma+i\sin u\sinh\sigma$,
-\[
-\left|e^{-i\tauvar\cos(u-i\sigma)}\right|
-=\exp\bigl(\tauvar\,\Im\cos(u-i\sigma)\bigr)
-=\exp\bigl(\tauvar\sin u\sinh\sigma\bigr)
-\le e^{\tauvar\sinh\sigma}.
-\]
-Therefore
-\[
-|c_n|\le e^{\tauvar\sinh\sigma-n\sigma},
-\]
-which is~\eqref{eq:cn-decay}. Summing the geometric tail gives the exponential form~\eqref{eq:eta-general} used in the main proof.
+For $\tauvar>0$ and $k>\tauvar$ put
+\begin{equation}
+\alpha(\tauvar,k):=\operatorname{arcosh}(k/\tauvar),
+\qquad
+f(\tauvar,k):=k\,\alpha(\tauvar,k)-\sqrt{k^2-\tauvar^2},
+\label{eq:besseldefs}
+\end{equation}
+(Lean \lean{besselAlpha}, \lean{besselF}). The tail majorant and its closed-form sum are
+\begin{equation}
+B(k):=\sqrt{\frac{\pi}{8}}\,
+\frac{\mathrm{e}^{-f(\tauvar,k)}}{(k^2-\tauvar^2)^{1/4}},
+\qquad
+E_2^\ast(\tauvar,q):=
+\frac{2\sqrt{\pi/8}\;\mathrm{e}^{-f(\tauvar,q)}}
+{\sqrt{\sqrt{q^2-\tauvar^2}}\;\bigl(1-\mathrm{e}^{-\alpha(\tauvar,q)}\bigr)},
+\label{eq:e2star}
+\end{equation}
+(Lean \lean{majorB}, \lean{nrE2star}), with $E_2(\tauvar,q):=2\sum_{m\ge0}B(q+m)\le
+E_2^\ast(\tauvar,q)$ (Lean \lean{nrE2_le_E2star}, from \lean{bessel_L2}). The weighted
+tail factors are, with $r=\mathrm{e}^{-\alpha(\tauvar,q)}$,
+\begin{equation}
+\eta_1(r):=\frac{1+r}{(1-r)^3},
+\qquad
+\eta_2(r):=\frac{1+11r+11r^2+r^3}{(1-r)^5},
+\label{eq:eta12}
+\end{equation}
+(Lean \lean{nrEta1}, \lean{nrEta2}), and the collar width is $B_c:=\tauvar/q^2$ (Lean
+\lean{nrB}). Assembling the realization bound of the next subsection at this width gives
+the calibration factor
+\begin{equation}
+\mathrm{nrCcal}(\tauvar,q)
+:=\frac{2}{\pi}\,\frac{1}{q}\,
+\sqrt{\,2\Bigl(1+\frac{B_c}{\tauvar}\Bigr)
+\Bigl(1+\frac{4}{27}\eta_1\Bigr)
+\Bigl(32\,\eta_2\,q^2+44+2\Bigl(12+\frac{16}{27}\Bigr)\eta_1\Bigr)\,}\,.
+\label{eq:ccal}
+\end{equation}
+where the square root covers the whole product (Lean \lean{nrCcal}; here
+$\eta_i=\eta_i(\mathrm{e}^{-\alpha(\tauvar,q)})$). The coefficient bound behind~\eqref{eq:e2star}
+is \lean{fcoef_sharp} (headline \lean{bessel_L1}); the tail sum is \lean{bessel_L2}.
 
-\section{The collar estimate behind the product bound}
-\label{app:collar}
+\subsection{Realization and the kernel bound}
 
-This appendix records what enters~\eqref{eq:kernelproduct1}. The constants are those of the formal
-development, which proves the inequality under the side conditions $\tauvar\le\rho q$,
-$\beta=B/\tauvar=\eta/q^2\le1/2$ and $\sigma>2\sqrt\beta$.
+Let $\Psi=\mathrm{e}^{-\mathrm{i}\cdot}-P$ with $P$ the degree-$(q-1)$ Chebyshev truncation, and let
+$\chi$ be the explicit $C^2$ cutoff with $\chi=1$ on the band, supported in the collar,
+and $\|\chi'\|\le K/B_c$, $\|\chi''\|\le K/B_c^2$ with $K=4$. The development builds a
+kernel $\kappa\in L^1(\R)$ whose Fourier transform agrees with $\Psi$ on the band
+(Lean \lean{inversion_on_band}) and controls its $L^1$ norm by the split-point
+optimization (Lean \lean{kap_L1_le}, headline \lean{realize_L1}):
+\begin{equation}
+\displaystyle
+\int_\R\|\kappa(t)\|\,\mathrm{d}t
+\;\le\;
+\mathrm{nrCcal}(\tauvar,q)\,q^2\,\mathrm{nrE2}(\tauvar,q).
+\label{eq:kernelbound}
+\end{equation}
+The inputs are the band error $\|\Psi\|\le\mathrm{nrE2}$ (Lean \lean{nr_sup_le}) and the
+derivative bounds through the Chebyshev tail (Lean \lean{nr_D1_le}, \lean{nr_D2_le},
+assembled in \lean{nr_kappa_le}). With $\mathrm{nrE2}\le\mathrm{nrE2star}$ this is the
+quantitative heart of the proof: all dependence on $\tauvar$ has disappeared except for
+the hypothesis $\tauvar<q$.
 
-\emph{(a) Chebyshev collar bounds.} The only delicate point in differentiating the polynomial
-approximation outside the exact band is the second derivative of $T_n$. Put $u=\cosh y$, so that
-$T_n(\cosh y)=\cosh ny$ and $T_n'(\cosh y)=n\sinh(ny)/\sinh y$; the second derivative is
-singular in this parametrization at $y=0$, and the standard identity
-\[
-(1-u^2)T_n''(u)=uT_n'(u)-n^2T_n(u)
-\]
-is what removes the singularity: at $u=1$ it gives $T_n''(1)=n^2(n^2-1)/3$. Combining the two
-descriptions --- the explicit hyperbolic combination on the collar and the differential equation at
-its boundary --- gives, for $|u|\le1+\beta$ with $0\le\beta\le\tfrac12$ and
-$y\le\operatorname{arcosh}(1+\beta)\le\sqrt{2\beta}\,(1+O(\beta))$,
-\[
-|T_n(u)|,\ |T_n'(u)|,\ |T_n''(u)|\le32n^4e^{2n\sqrt\beta},
-\]
-the collar growth of Chebyshev polynomials and their derivatives~\cite{MasonHandscomb}.
-
-\emph{(b) Assembly.} The two constants of~\eqref{eq:C12} are integrals over the support
-$[-(\tauvar+B),\tauvar+B]$, so each is bounded by the length of the support times the supremum of
-its integrand. On the band $\widehat\kappa=\Psi$ and $\lvert\Psi\rvert\le\eta$; on the collar
-$\widehat\kappa=\Psi\chi$, and the product rule with~\eqref{eq:cutoff-deriv} gives
-\[
-\lvert\widehat\kappa''\rvert
-\le\lvert\Psi''\rvert+\frac{2K}{B}\lvert\Psi'\rvert+\frac{K}{B^2}\lvert\Psi\rvert .
-\]
-The polynomial $P_{q-1}$ and its first two derivatives are controlled on the whole collar by (a),
-with the head bound $\lvert c_n(\tauvar)\rvert\le1$ for $n<q$ and the tail~\eqref{eq:cn-decay} for $n\ge q$. Running the explicit bookkeeping with
-$\beta=\eta/q^2$ and $\eta/B=q^2/\tauvar$ gives $B M_1\le9\eta q$ and
-$\tauvar^2M_2\le141q^5$, where $M_1$ and $M_2$ bound $\lvert\widehat\kappa\rvert$ and
-$\lvert\widehat\kappa''\rvert$ on the support; multiplying yields~\eqref{eq:kernelproduct1} and,
-with~\eqref{eq:eta-exp},~\eqref{eq:kernelproduct2}. This is exactly the place where the relative
-collar scaling $B/\tauvar=\eta/q^2$ is used.
-
-\section{Formalization versus elementary exposition}
-\label{app:scope}
-
-Three distinctions are worth keeping explicit.
-
-First, the elementary bound of Section~\ref{sec:elementary} is not merely expository: it is a
-machine-checked theorem (\path{elementary_bound}, \path{elementary_bound_pi}), together
-with the pointwise comparison \path{elementary_gt_four_over_e} with $4(N+1)/e$. Only the
-weaker $2/e$ estimate of Section~\ref{sec:elementary} remains paper-level; it is superseded by the
-doubled-flatness bound and is kept to show how little is needed for linear growth.
-
-Second, the present proof description uses the language of Chebyshev approximation because it makes
-the whole-band idea transparent. The formal development realizes the approximation in two ways: the
-band error through the Fourier coefficients of $e^{-i\tau\cos u}$ and contour shifting
-(\path{Approx.lean}, \path{Band.lean}), and the collar derivative bounds of~\eqref{eq:sharpcollar} through the Chebyshev tail of the same expansion (\path{SharpDeriv.lean},
-\path{SharpDerivGen.lean}). Neither route relies on a separate Bernstein-ellipse theorem as a
-black box.
-
-Third, the asymptotic theorem in \path{Theorem.lean} carries the two representation-level
-assumptions discussed in Section~\ref{sec:formal}, because it is phrased through Mathlib's real-valued
-\path{liminf}; the underlying analytic contradiction is the unconditional statement that an
-admissible sequence cannot satisfy $\tau\le\rho(2N+2)$ for all sufficiently large $N$. The
-finite-order theorems of Section~\ref{sec:formal} need no such hypothesis: they are statements about
-the cost of an admissible sequence and carry nothing beyond admissibility.
+The scope distinctions are recorded in Sec.~\ref{sec:formal}: the elementary and Jensen
+rungs and the exact criterion are machine-checked end to end, while the passage from the
+per-sequence bounds to $\cstar(\phi)\ge4$ in Corollary~\ref{cor:allN} is ordinary analysis
+in the paper and no formalized infimum is claimed.
 
 \section{Numerical solutions}
 \label{app:sequences}
 
-Table~\ref{tab:num} is reproduced here as explicit data. For every order $N\le12$ at $\phi=\pi$ we
-list the $L$ costly angles $\theta_j$ and the $L$ free angles $\alpha_j$ in units of $\pi$, both in
-the \emph{time order} of the sequence: $\alpha_j$ is the free rotation that follows the costly
-segment $\theta_j$, and the first printed entries are the ones applied first. The product that was
-verified is therefore
+The angle lists behind Table~\ref{tab:num} are distributed with the data set of
+Ref.~\cite{DataRepo}, in the convention in which they were verified. For every order $N\le12$ at
+$\phi=\pi$ the data set gives the $L$ costly angles $\theta_j$ and the $L$ free angles
+$\alpha_j$ in units of $\pi$, both in the \emph{time order} of the sequence: $\alpha_j$ is the
+free rotation that follows the costly segment $\theta_j$, and the first entries are the ones
+applied first. The product that was verified is therefore
 \[
 U_\lambda=X(\alpha_L)Z(\lambda\theta_L)\,X(\alpha_{L-1})Z(\lambda\theta_{L-1})\cdots
 X(\alpha_1)Z(\lambda\theta_1),
@@ -1256,163 +1067,16 @@ reduced to its representative in $[0,2\pi)$, which uses $X(\alpha+2\pi)=-X(\alph
 changes the propagator only by the global sign that the convention $U_1=Z(\pi)$ of~\eqref{eq:target} restores. After those two steps each row has $L$ angles of each kind, as the
 sequence of the paper requires.
 
-Each printed list was re-verified from scratch in exactly this form, as described in
-Section~\ref{sec:numerics}: the nominal mismatch $\lVert U_1\mp Z(\pi)\rVert$ is below
+Each list was re-verified from scratch in exactly this form, as described in
+Sec.~\ref{sec:numerics}: the nominal mismatch $\lVert U_1\mp Z(\pi)\rVert$ is below
 $9\times10^{-10}$ and the flatness residual $\rho_N$ of~\eqref{eq:Ukbound} is below
-$1.5\times10^{-10}$, so the printed lists carry the accuracy claimed in
-Table~\ref{tab:num}; the deviations from the target follow $\eps^{N+1}$ accordingly. The same
-lists, with the Bloch-sphere trajectory of every sequence and a browser-side re-computation of these
-numbers, are the first resource of Table~\ref{tab:resources}.
+$1.5\times10^{-10}$, so the lists carry the accuracy claimed in Table~\ref{tab:num}, and the
+deviations from the target follow $\eps^{N+1}$ accordingly. The same lists, with the Bloch-sphere
+trajectory of every sequence and a browser-side re-computation of these numbers, are the first
+resource of Table~\ref{tab:resources}. The script that regenerates this appendix in printable
+form from the verified data is part of the same data set.
 
-\input{appendix_seqs_num.tex}
 
-\begin{thebibliography}{99}\raggedright
-
-\bibitem{Brown2004}
-K.~R. Brown, A.~W. Harrow, and I.~L. Chuang,
-``Arbitrarily accurate composite pulse sequences,''
-\emph{Physical Review A} \textbf{70}, 052318 (2004);
-\href{https://doi.org/10.1103/PhysRevA.70.052318}{doi:10.1103/PhysRevA.70.052318};
-arXiv:quant-ph/0407022.
-
-\bibitem{Merrill2014}
-J.~T. Merrill and K.~R. Brown,
-``Progress in compensating pulse sequences for quantum computation,''
-in \emph{Quantum Information and Computation for Chemistry} (Wiley),
-\emph{Advances in Chemical Physics} \textbf{154}, 241--294 (2014);
-arXiv:1203.6392.
-
-\bibitem{Low2014}
-G.~H. Low, T.~J. Yoder, and I.~L. Chuang,
-``Optimal arbitrarily accurate composite pulse sequences,''
-\emph{Physical Review A} \textbf{89}, 022341 (2014);
-\href{https://doi.org/10.1103/PhysRevA.89.022341}{doi:10.1103/PhysRevA.89.022341};
-arXiv:1307.2211.
-
-\bibitem{Kabytayev2014}
-C.~Kabytayev, T.~J. Green, K.~Khodjasteh, M.~J. Biercuk, L.~Viola, and K.~R. Brown,
-``Robustness of composite pulses to time-dependent control noise,''
-\emph{Physical Review A} \textbf{90}, 012316 (2014);
-\href{https://doi.org/10.1103/PhysRevA.90.012316}{doi:10.1103/PhysRevA.90.012316};
-arXiv:1402.5174.
-
-\bibitem{Uhrig2007}
-G.~S. Uhrig,
-``Keeping a quantum bit alive by optimized $\pi$-pulse sequences,''
-\emph{Physical Review Letters} \textbf{98}, 100504 (2007);
-\href{https://doi.org/10.1103/PhysRevLett.98.100504}{doi:10.1103/PhysRevLett.98.100504};
-arXiv:quant-ph/0609203.
-
-\bibitem{PazSilva2014}
-G.~A. Paz-Silva and L.~Viola,
-``General transfer-function approach to noise filtering in open-loop quantum control,''
-\emph{Physical Review Letters} \textbf{113}, 250501 (2014);
-\href{https://doi.org/10.1103/PhysRevLett.113.250501}{doi:10.1103/PhysRevLett.113.250501};
-arXiv:1408.3836.
-
-\bibitem{Kukita2023}
-S.~Kukita, H.~Kiya, and Y.~Kondo,
-``Lower bound on operation time of composite quantum gates robust against pulse length error,''
-\emph{Journal of Physics A: Mathematical and Theoretical} \textbf{56}, 485305 (2023);
-\href{https://doi.org/10.1088/1751-8121/ad0804}{doi:10.1088/1751-8121/ad0804}.
-
-\bibitem{Zeng2025}
-J.~Zeng and X.-H. Deng,
-``Fundamental costs of noise-robust quantum control: speed limits and complexity,''
-arXiv:2510.07183 (2025).
-
-\bibitem{Kosut2025}
-R.~L. Kosut, D.~A. Lidar, and H.~Rabitz,
-``A fundamental bound for robust quantum gate control,''
-arXiv:2507.01215 (2025).
-
-\bibitem{Bordg2021}
-A.~Bordg, H.~Lachnitt, and Y.~He,
-``Certified quantum computation in Isabelle/HOL,''
-\emph{Journal of Automated Reasoning} \textbf{65}, 691--709 (2021);
-\href{https://doi.org/10.1007/s10817-020-09584-7}{doi:10.1007/s10817-020-09584-7};
-arXiv:2012.13925.
-
-\bibitem{Meiburg2025}
-A.~Meiburg, L.~A. Lessa, and R.~R. Soldati,
-``A formalization of the generalized quantum Stein's lemma in Lean,''
-arXiv:2510.08672 (2025).
-
-\bibitem{UhrigLidar2010}
-G.~S. Uhrig and D.~A. Lidar,
-``Rigorous bounds for optimal dynamical decoupling,''
-\emph{Physical Review A} \textbf{82}, 012301 (2010);
-\href{https://doi.org/10.1103/PhysRevA.82.012301}{doi:10.1103/PhysRevA.82.012301};
-arXiv:1002.1484.
-
-\bibitem{NgLidarPreskill2011}
-H.~K. Ng, D.~A. Lidar, and J.~Preskill,
-``Combining dynamical decoupling with fault-tolerant quantum computation,''
-\emph{Physical Review A} \textbf{84}, 012305 (2011);
-\href{https://doi.org/10.1103/PhysRevA.84.012305}{doi:10.1103/PhysRevA.84.012305};
-arXiv:0911.3202.
-
-\bibitem{Khodjasteh2011}
-K.~Khodjasteh, T.~Erd\'elyi, and L.~Viola,
-``Limits on preserving quantum coherence using multipulse control,''
-\emph{Physical Review A} \textbf{83}, 020305(R) (2011);
-\href{https://doi.org/10.1103/PhysRevA.83.020305}{doi:10.1103/PhysRevA.83.020305};
-arXiv:1009.1810.
-
-\bibitem{Evered2023}
-S.~J. Evered, D.~Bluvstein, M.~Kalinowski, \emph{et al.},
-``High-fidelity parallel entangling gates on a neutral-atom quantum computer,''
-\emph{Nature} \textbf{622}, 268--272 (2023);
-\href{https://doi.org/10.1038/s41586-023-06481-y}{doi:10.1038/s41586-023-06481-y};
-arXiv:2304.05420.
-
-\bibitem{Mohan2023}
-M.~Mohan, R.~de Keijzer, and S.~Kokkelmans,
-``Robust control and optimal Rydberg states for neutral atom two-qubit gates,''
-\emph{Physical Review Research} \textbf{5}, 033052 (2023);
-\href{https://doi.org/10.1103/PhysRevResearch.5.033052}{doi:10.1103/PhysRevResearch.5.033052};
-arXiv:2212.10159.
-
-\bibitem{Jandura2022}
-S.~Jandura and G.~Pupillo,
-``Time-optimal two- and three-qubit gates for Rydberg atoms,''
-\emph{Quantum} \textbf{6}, 712 (2022);
-\href{https://doi.org/10.22331/q-2022-05-13-712}{doi:10.22331/q-2022-05-13-712};
-arXiv:2202.00903.
-
-\bibitem{Beterov2009}
-I.~I. Beterov, I.~I. Ryabtsev, D.~B. Tretyakov, and V.~M. Entin,
-``Quasiclassical calculations of blackbody-radiation-induced depopulation rates and effective
-lifetimes of Rydberg $nS$, $nP$, and $nD$ alkali-metal atoms,''
-\emph{Physical Review A} \textbf{79}, 052504 (2009)
-[erratum: \emph{Physical Review A} \textbf{80}, 059902 (2009)];
-\href{https://doi.org/10.1103/PhysRevA.79.052504}{doi:10.1103/PhysRevA.79.052504};
-arXiv:0810.0339.
-
-\bibitem{MasonHandscomb}
-J.~C. Mason and D.~C. Handscomb,
-\emph{Chebyshev Polynomials} (Chapman \& Hall/CRC, Boca Raton, 2003).
-
-\bibitem{Ye2026}
-B.~Ye, D.~Luo, W.~Gong, \emph{et al.},
-``Ultrafast high-fidelity Rydberg entangling gate,''
-unpublished manuscript, Massachusetts Institute of Technology; cited as a private communication
-(2026), no public record at the time of writing.
-
-\bibitem{LeanRepo}
-Dytchem,
-``Explicit finite-order lower bounds for robust composite $Z$ rotations,''
-Lean~4 + Mathlib formalization,
-\url{https://github.com/Dytchem/robust-z-lower-bound-lean};
-verification status and raw audit output at \url{https://show.dytchem.cn/lean/}.
-
-\bibitem{DataRepo}
-Dytchem,
-``Numerical upper bounds for high-order robust composite $Z$ rotations,''
-data set, verification scripts and browser front end (2026),
-\url{https://show.dytchem.cn/bloch/} and \url{https://show.dytchem.cn/files/code.zip};
-the sequences are also listed in Appendix~\ref{app:sequences}.
-
-\end{thebibliography}
+\bibliography{refs}
 
 \end{document}

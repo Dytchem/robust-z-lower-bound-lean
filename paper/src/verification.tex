@@ -1,0 +1,148 @@
+\section{Machine-checked verification in Lean 4}
+\label{sec:formal}
+
+Each rung of this paper corresponds to a named Lean~4 declaration of a public
+development~\cite{LeanRepo}. The analysis core and the exact-criterion rung live in the
+\lean{wC} tree, the Jensen rung in the \lean{wF} tree, and the weak-constant $8/\mathrm{e}$ variant in
+the \lean{wM} tree (paths below are relative to \lean{lean_sharp/}). In each tree the model
+-- the rotations, the evolution, \lean{Admissible}, and the cost $T=\texttt{cost}\,\theta$ --
+is fixed in \lean{RobustZ/Statement.lean}, and the scalar flatness~\eqref{eq:hflat} is derived
+from the matrix flatness (\lean{h_flat}) rather than assumed. Write $q=2N+2$ and
+$\tauvar=T/2$.
+
+\subsection{The machine-checked statements}
+
+\begin{theorem}[Elementary bound, all orders; \lean{elementary_bound}, \lean{elementary_bound_pi}]
+\label{thm:formal-elementary}
+For every $0<\phi\le\pi$ and every order-$N$ admissible sequence,
+\begin{equation}
+T\ge2\,\bigl(2\,q!\,\sin^{2}(\phi/4)\bigr)^{1/q},
+\qquad\text{and at }\phi=\pi:\quad T\ge2\,(q!)^{1/q}.
+\label{eq:formal-elementary}
+\end{equation}
+This is the kernel-checked form of~\eqref{eq:thm-elementary} (Theorem~\ref{thm:elementary}).
+\end{theorem}
+
+\begin{theorem}[Jensen bound; \lean{jensen_rung_final}, \lean{jensen_rung_pi_final}]
+\label{thm:formal-jensen}
+For every $0<\phi\le\pi$ and every order-$N$ admissible sequence, with
+$s=2\sin^2(\phi/4)$,
+\begin{equation}
+T\ge\frac{\pi\,q}{\mathrm{e}\,(2/s)^{1/q}},
+\qquad\text{and at }\phi=\pi:\quad
+T\ge\frac{\pi\,q}{\mathrm{e}\,2^{1/q}}.
+\label{eq:formal-jensen}
+\end{equation}
+This is the kernel-checked form of~\eqref{eq:thm-jensen} (Theorem~\ref{thm:jensen}); the
+ratio of the per-$N$ bound to $N$ tends to $2\pi/\mathrm{e}$ (\lean{jensen_ratio_tendsto}).
+\end{theorem}
+
+\begin{theorem}[Exact criterion; \lean{new_rung_final}]
+\label{thm:formal-newrung}
+Let $N\ge1$, $0<\phi\le\pi$, $1\le\tauvar<q=2N+2$. If
+$\mathrm{nrCcal}(\tauvar,q)\,q^2\,\mathrm{nrE2star}(\tauvar,q)<\sin^2(\phi/4)$ with the
+closed forms~\eqref{eq:besseldefs}--\eqref{eq:ccal}, then every order-$N$ admissible
+sequence satisfies $2\tauvar<\mathrm{cost}\,\theta$.
+This is the kernel-checked form of~\eqref{eq:thm-newrung} (Theorem~\ref{thm:newrung}).
+The certified instances \lean{cert_N2}--\lean{cert_N4} and
+\lean{cert_N5_tight}--\lean{cert_N12_tight} (Table~\ref{tab:certs}) and the
+closed form $T\ge4(N+1)(1-\mathrm{nrU}(q))$ (\lean{nr_closed_form},
+i.e.~\eqref{eq:closedform}) are proved from it with nothing else added.
+\end{theorem}
+
+\subsection{Statement-by-statement correspondence}
+
+\begin{table}[t]\centering\footnotesize
+\caption{Correspondence between the objects of this paper and the declarations that check them.
+File paths are relative to \lean{lean_sharp/}; declaration names are exact.}
+\label{tab:formal-correspondence}
+\begin{tabular}{@{}p{0.30\linewidth}p{0.36\linewidth}p{0.30\linewidth}@{}}
+\toprule
+\textbf{Paper object} & \textbf{Lean declaration} & \textbf{File}\\
+\midrule
+\raggedcell Model, \lean{Admissible} and \lean{cost} & \raggedcell \lean{Admissible}, \lean{cost} & \raggedcell \lean{wC/RobustZ/Statement.lean} (same in \lean{wF}, \lean{wM})\\
+\raggedcell Direct bound (8), Theorem~\ref{thm:direct} & \raggedcell paper-level proof (in text) & \raggedcell Sec.~\ref{sec:elementary}\\
+\raggedcell Carrier flatness (20), moments (39) & \raggedcell \lean{h_flat}, \lean{h_moments} & \raggedcell \lean{wC/RobustZ/Flatness.lean}, \lean{wC/RobustZ/ExpSum.lean}\\
+\raggedcell Elementary bound, Theorem~\ref{thm:elementary} & \raggedcell \lean{elementary_bound}, \lean{elementary_bound_pi} & \raggedcell \lean{wC/RobustZ/ElementaryBound.lean}\\
+\raggedcell Jensen bound, Theorem~\ref{thm:jensen}, with its analytic core & \raggedcell \lean{jensen_rung_final}, \lean{jensen_rung_pi_final}, \lean{jensen_ratio_tendsto} & \raggedcell \lean{wF/RobustZ/JensenBridge.lean}, \lean{wF/RobustZ/JensenRung.lean}\\
+\raggedcell Coefficient bound L1, tail sum L2 & \raggedcell \lean{fcoef_sharp}, \lean{bessel_L1}, \lean{bessel_L2} & \raggedcell \lean{wC/RobustZ/BesselTail.lean}\\
+\raggedcell Realization L3, Fourier inversion & \raggedcell \lean{kap_L1_le}, \lean{realize_L1}, \lean{inversion_on_band} & \raggedcell \lean{wC/RobustZ/RealizeLemma.lean}, \lean{wC/RobustZ/InversionId.lean}\\
+\raggedcell Chebyshev derivative bundle D1 & \raggedcell \lean{cb_term1_le}, \lean{cb_term2_le}, \lean{cb_hasSum0}--\lean{cb_hasSum2} & \raggedcell \lean{wC/RobustZ/ChebBundle.lean}\\
+\raggedcell Exact criterion L4/L5 and closed form, Theorem~\ref{thm:newrung} & \raggedcell \lean{nr_sup_le}, \lean{nr_D1_le}, \lean{nr_D2_le}, \lean{nr_kappa_le}, \lean{nr_main_rung}, \lean{nr_closed_form} & \raggedcell \lean{wC/RobustZ/NewRung.lean}\\
+\raggedcell Wrapper and finite-$N$ certificates & \raggedcell \lean{new_rung_final}, \lean{cert_N2}--\lean{cert_N4}, \lean{cert_N5_tight}--\lean{cert_N12_tight} & \raggedcell \lean{wC/RobustZ/RungFinal.lean}, \lean{wC/RobustZ/RungTight.lean}\\
+\raggedcell Weak-constant $8/\mathrm{e}$ variant & \raggedcell \lean{eight_over_e_bound} & \raggedcell \lean{wM/RobustZ/EightOverE.lean}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Scope of the verification}
+
+Machine-checked: the model and the carrier flatness; the elementary bound with its exact
+constant $2$, at every order and every $0<\phi\le\pi$; the Jensen bound with its exact
+constant $\pi/\mathrm{e}$ at every order and every $0<\phi\le\pi$; the exact criterion with its
+closed forms, hence every entry of Table~\ref{tab:certs} and the coefficient-$4$ closed
+form; and the $8/\mathrm{e}$ variant with $C=10^8$. Not machine-checked: the numerical material of
+Sec.~\ref{sec:numerics}. The low-order sequences found by local search and their
+re-verified costs are upper bounds computed outside Lean; they enter no proof, and no
+optimality or small-$N$ statement about them is formalized. The passage from the
+per-sequence bounds to $\cstar(\phi)\ge4$ in Corollary~\ref{cor:allN} is ordinary analysis
+in the paper; the developments state per-sequence cost bounds and claim no formalized
+infimum. The audit ran on the development sources: a source scan finds no \lean{sorry},
+\lean{admit}, or \lean{axiom} in the project files, and the headline theorems depend only
+on the three standard logical axioms \lean{propext}, \lean{Classical.choice} and
+\lean{Quot.sound} (see the \lean{Audit*.lean} files, e.g.\
+\lean{wC/RobustZ/AuditRungFinal.lean}). Statements, build logs and the raw
+\texttt{\#print axioms} output are collected at \url{https://show.dytchem.cn/lean/}, and the
+repository is cited as~\cite{LeanRepo}, with sources at
+\url{https://github.com/Dytchem/robust-z-lower-bound-lean}.
+
+\subsection{Code, data, and reproducibility}
+\label{sec:resources}
+
+Everything used in this paper is public: the proofs are a Lean development, the numerical sequences
+and their independent re-verification are a data set with a browser front end, and the figures and
+tables of Sec.~\ref{sec:numerics} are regenerated from that data by short scripts.
+Table~\ref{tab:resources} collects the four entry points.
+
+\begin{table}[t]\centering\footnotesize
+\caption{Public resources for this paper. The Lean development is self-contained: a fresh clone
+reproduces its statements with the three commands of its \texttt{README}. The numerical
+re-verification is likewise reproducible from the last entry, which carries the sequences at the
+precision used in Table~\ref{tab:num}. All addresses were accessed on 8 October 2026.}
+\label{tab:resources}
+\begin{tabular}{@{}p{0.22\linewidth}p{0.68\linewidth}@{}}
+\toprule
+\textbf{Resource} & \textbf{Content} \\
+\midrule
+\raggedcell \url{https://show.dytchem.cn/bloch/} &
+\raggedcell Bloch-sphere animation and the full angle lists of every sequence of
+Table~\ref{tab:num}; browser-side re-computation of the nominal mismatch, of the deviation
+$\delta(\eps)$ and of its slope, with the equiangular family shown side by side.~\cite{DataRepo} \\
+\raggedcell \url{https://show.dytchem.cn/lean/} &
+\raggedcell Verification status of the formal development: the exact Lean statements of the
+bounds, the source scan for \lean{sorry} and \lean{axiom}, and the raw \lean{lake build} and
+\texttt{\#print axioms} output for the headline theorems.~\cite{LeanRepo} \\
+\raggedcell \href{https://github.com/Dytchem/robust-z-lower-bound-lean}{GitHub repository} &
+\raggedcell Lean~4 with Mathlib, pinned by \lean{lean-toolchain} and
+\lean{lake-manifest.json}; \lean{VERIFICATION.md} records two from-scratch verifications on
+three trees: \lean{lean_sharp/wC} carries the analysis core, the exact-criterion rung and its
+certificates (52 modules); \lean{lean_sharp/wF} carries the Jensen rung and its bridge
+(35 modules); \lean{lean_sharp/wM} carries the $8/\mathrm{e}$ variant (47 modules); all build
+green with no \lean{sorry} or \lean{axiom} in the sources.~\cite{LeanRepo} \\
+\raggedcell \href{https://show.dytchem.cn/files/code.zip}{Verification scripts and data} &
+\raggedcell \lean{verify_num.py}, which rebuilds every propagator with
+\lean{scipy.linalg.expm} and re-evaluates the Taylor coefficients of Sec.~\ref{sec:numerics}
+at $50$ decimal digits; \lean{make_outputs.py}, which regenerates Figs.~\ref{fig:num}
+and~\ref{fig:phys} and the printable angle lists of Appendix~\ref{app:sequences} from the
+verified data; the data themselves (\lean{num_results.json}, \lean{solutions_largeN.json}); and
+a \lean{README}.~\cite{DataRepo} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Each tree builds green from its pinned toolchain and manifest alone.
+The angle lists of Appendix~\ref{app:sequences} are stored in the convention in which they were
+verified, rounded to $12$ decimals of $\pi$; the rounding is checked, not assumed: feeding those
+rounded lists back into~\eqref{eq:rotations}--\eqref{eq:robustness} again gives a nominal
+mismatch below $9\times10^{-10}$ and a flatness residual below $1.5\times10^{-10}$, which are the
+two accuracy statements of Table~\ref{tab:num}.
