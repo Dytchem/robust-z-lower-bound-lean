@@ -21,19 +21,19 @@ Every order-`N` robust sequence satisfies each of the following.
 
 **1. Direct Taylor bound (coefficient `2/e ≈ 0.736`), every `N`:**
 
-$$T \ge 2\,[\,2\,(N+1)!\,\sin(\phi/4)\,]^{1/(N+1)}$$
+$$T \ge 2\ [\ 2\ (N+1)!\ \sin(\phi/4)\ ]^{1/(N+1)}$$
 
 **2. Elementary bound (coefficient `4/e ≈ 1.472`), every `N`:**
 
-$$T \ge 2\,[\,2\,q!\,\sin^{2}(\phi/4)\,]^{1/q}$$
+$$T \ge 2\ [\ 2\ q!\ \sin^{2}(\phi/4)\ ]^{1/q}$$
 
 **3. Jensen bound (coefficient `2\pi/e ≈ 2.311`), every `N`:**
 
-$$T \ge \frac{\pi q}{e}\,\sin^{2/q}(\phi/4)$$
+$$T \ge \frac{\pi q}{e}\ \sin^{2/q}(\phi/4)$$
 
 **4. Weak-constant variant (coefficient `8/e ≈ 2.943`), every `N`:**
 
-$$T \ge 4\,\big[\frac{q!\,\sin^{4}(\phi/4)}{10^{8}\,q^{4}}\big]^{1/q}$$
+$$T \ge 4\ [\ \frac{q!\ \sin^{4}(\phi/4)}{10^{8}\ q^{4}}\ ]^{1/q}$$
 
 **5. Exact criterion (coefficient `→ 4`) — an explicit, checkable inequality:**
 
@@ -46,7 +46,7 @@ $$T > 2,\ 2,\ 4,\ 8,\ 10,\ 14,\ 16,\ 18,\ 22,\ 24,\ 28 \qquad (N = 2,\dots,12),$
 
 and its closed form gives, for `N ≥ 17557`,
 
-$$T \ge 4(N+1)\,[\,1 - 6\,(\log q / q)^{2/3}\,],$$
+$$T \ge 4(N+1)\ [\ 1 - 6\ (\log q / q)^{2/3}\ ],$$
 
 which is the linear growth `T ≥ (4+o(1)) N` and hence `liminf T_min / N ≥ 4`.
 
